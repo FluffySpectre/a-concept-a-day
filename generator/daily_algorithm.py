@@ -9,6 +9,7 @@ from datetime import datetime
 # Config
 answer_language = "English"
 target_dir = "/home/daily-algorithm/da-backend/server/public"
+previous_algorithms_dir = target_dir + "/previous"
 
 # Try to read the list of previous_algorithms
 previous_algorithms = []
@@ -65,7 +66,7 @@ prompt = (
 new_algorithm = None
 retry_count = 3
 while new_algorithm is None and retry_count > 0:
-    # Generate a new concept
+    # Generate a new algorithm
     response = prompt_ollama(prompt)
 
     try:
@@ -97,7 +98,7 @@ if response.endswith("```"):
 new_algorithm["coding_example"] = response.strip()
 # new_algorithm["coding_examples"] = [{"language": "python", "language_display": "Python", "code": response}]
 
-# Add the new concept to the list of previous_algorithms
+# Add the new algorithm to the list of previous_algorithms
 new_algorithm_name = new_algorithm["name"]
 previous_algorithms.append(new_algorithm_name)
 
@@ -105,10 +106,16 @@ previous_algorithms.append(new_algorithm_name)
 with open(target_dir + "/previous_algorithms.txt", "w") as file:
     file.write("\n".join(previous_algorithms))
 
-# Save the new concept
+# Save the new algorithm
+dt = datetime.now()
 with open(target_dir + "/daily_algorithm.json", "w") as file:
-    # Add the now date in the new_concept
-    dt = datetime.now()
+    # Add the now date in the new_algorithm
+    new_algorithm["date"] = datetime.timestamp(dt)
+    json.dump(new_algorithm, file, indent=2)
+
+# Save the new_algorithm to the previous folder
+today = dt.strftime("%Y-%m-%d")
+with open(previous_algorithms_dir + f"/{today}.json", "w") as file:
     new_algorithm["date"] = datetime.timestamp(dt)
     json.dump(new_algorithm, file, indent=2)
 
