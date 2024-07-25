@@ -1,5 +1,5 @@
 const express = require('express');
-const fs = require('fs');
+const fs = require('node:fs/promises');
 const TemplateRenderer = require('./TemplateRenderer');
 const RSSFeed = require('./RSSFeed');
 const AlgorithmRepository = require('./AlgorithmRepository');
@@ -11,8 +11,8 @@ const algorithmRepository = new AlgorithmRepository();
 
 // app.use(express.static('public'))
 
-app.get('/', (req, res) => {
-  const json = algorithmRepository.getLatestAlgorithm();
+app.get('/', async (req, res) => {
+  const json = await algorithmRepository.getLatestAlgorithm();
   if (!json) {
     res.status(404).send('No daily algorithm found!');
     return;
@@ -20,13 +20,13 @@ app.get('/', (req, res) => {
 
   // Render the index.html file with the json data
   // and send the rendered html to the client
-  const templateHTML = fs.readFileSync(__dirname + '/public/index.html', 'utf8');
+  const templateHTML = await fs.readFile(__dirname + '/public/index.html', 'utf8');
   const templateRenderer = new TemplateRenderer(json);
   res.send(templateRenderer.render(templateHTML));
 });
 
-app.get('/json', (req, res) => {
-  const json = algorithmRepository.getLatestAlgorithm();
+app.get('/json', async (req, res) => {
+  const json = await algorithmRepository.getLatestAlgorithm();
   if (!json) {
     res.status(404).send('No daily algorithm found!');
     return;
@@ -34,10 +34,10 @@ app.get('/json', (req, res) => {
   res.json(json);
 });
 
-app.get('/prev/:date', (req, res) => {
+app.get('/prev/:date', async (req, res) => {
   const date = req.params.date;
 
-  const json = algorithmRepository.getAlgorithmOfDate(date);
+  const json = await algorithmRepository.getAlgorithmOfDate(date);
   if (!json) {
     res.status(301).redirect('/');
     return;
@@ -45,15 +45,16 @@ app.get('/prev/:date', (req, res) => {
   
   // Render the index.html file with the json data
   // and send the rendered html to the client
-  const templateHTML = fs.readFileSync(__dirname + '/public/index.html', 'utf8');
+  const templateHTML = await fs.readFile(__dirname + '/public/index.html', 'utf8');
   const templateRenderer = new TemplateRenderer(json);
   res.send(templateRenderer.render(templateHTML));
 });
 
-app.get('/rss', (req, res) => {
+app.get('/rss', async (req, res) => {
   const rssFeed = new RSSFeed();
+  const feedXML = await rssFeed.render();
   res.set('Content-Type', 'application/rss+xml');
-  res.send(rssFeed.render());
+  res.send(feedXML);
 });
 
 app.listen(port, () => {

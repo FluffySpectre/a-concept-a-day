@@ -4,15 +4,21 @@ const assert = require('node:assert/strict');
 // should return the latest algorithm
 const AlgorithmRepository = require('./AlgorithmRepository');
 const algorithmRepository = new AlgorithmRepository();
-const latestAlgorithm = algorithmRepository.getLatestAlgorithm();
-assert.ok(latestAlgorithm, 'AlgorithmRepository: No latest algorithm found.');
+const testLatestAlgorithm = async () => {
+    const latestAlgorithm = await algorithmRepository.getLatestAlgorithm();
+    assert.ok(latestAlgorithm, 'AlgorithmRepository: No latest algorithm found.');
+};
+testLatestAlgorithm();
 
 // RSSFeed
-// should return a valid RSS feed object
+// should return valid RSS feed xml
 const RSSFeed = require('./RSSFeed');
 const rssFeed = new RSSFeed();
-const feedXML = rssFeed.render();
-assert.ok(feedXML.indexOf('<rss') !== -1, 'RSSFeed: No valid rss xml.');
-// console.log(feedXML);
+const testValidRSSXML = async () => {
+    const feedXML = await rssFeed.render();
+    assert.ok(feedXML.indexOf('<rss') !== -1, 'RSSFeed: No valid rss xml.');
+    // console.log(feedXML);
+};
+testValidRSSXML();
 
 console.log('All tests completed!');
