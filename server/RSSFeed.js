@@ -34,7 +34,7 @@ module.exports = class RSSFeed {
       const isoString = new Date(algorithm.date * 1000).toISOString();
       const dateISO = isoString.split('T')[0];
 
-      const bodyHTML = algorithm.summary + '<br><br>' + algorithm.example + '<br><br><code>' + algorithm.coding_example + '</code>';
+      const bodyHTML = algorithm.summary + '<br><br>' + algorithm.example + '<br><br><pre><code>' + algorithm.coding_example + '</code></pre>';
 
       return {
         title: algorithm.name,
