@@ -1,6 +1,6 @@
 const { Builder } = require('xml2js');
 const AlgorithmRepository = require('./AlgorithmRepository');
-
+const { encodeHTMLEntities } = require('./utils');
 module.exports = class RSSFeed {
     constructor() {
         this.algorithmRepository = new AlgorithmRepository();
@@ -33,10 +33,12 @@ module.exports = class RSSFeed {
             const isoString = new Date(algorithm.date * 1000).toISOString();
             const dateISO = isoString.split('T')[0];
 
+            const description = algorithm.summary + '<br><br>' + algorithm.example;
+
             return {
                 title: algorithm.name,
                 link: `https://daily-algorithm.com/prev/${dateISO}`,
-                description: algorithm.summary + '\n\n' + algorithm.example,
+                description: encodeHTMLEntities(description),
                 pubDate: isoString
             };
         });
