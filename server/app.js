@@ -44,13 +44,13 @@ app.get('/prev/:date', (req, res) => {
   const date = req.params.date;
   const filename = __dirname + `/public/previous/${date}.json`;
   if (!fs.existsSync(filename)) {
-    res.status(404).send('No algorithm for this date found!');
+    res.redirect('/');
     return;
   }
 
   const json = JSON.parse(fs.readFileSync(filename));
   if (!json) {
-    res.status(404).send('No algorithm for this date found!');
+    res.redirect('/');
     return;
   }
   
