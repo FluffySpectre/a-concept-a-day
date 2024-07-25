@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Algorithm</title>
+   
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.css" integrity="sha512-jtWR3pdYjGwfw9df601YF6uGrKdhXV37c+/6VNzNctmrXoO0nkgHcS03BFxfkWycOa2P2Nw9Y9PCT9vjG9jkVg==" crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-twilight.min.css" integrity="sha512-ch9ThmrGmkVrVm9tL/puGmSfzQps4yk9LDrWuswb65ZnPOIKuYZBen1yn3ez/fEbgeBqrU/IJ443OqgallfE9Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+         html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.3;
+        }
+
+        body {
+            font-family: 'Source Code Pro', 'Roboto', sans-serif;
+            background-color: #f0f0f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .main-container {
+            overflow-y: auto;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 30px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .container {
+            margin-bottom: 30px;
+            max-width: 700px;
+            min-width: 250px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border: 2px solid #686767;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            z-index: 10;
+        }
+        h1 {
+            color: #e7005d;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #333;
+            margin: 0;
+            margin-top: -5px;
+        }
+        p {
+            color: #555;
+            line-height: 1.6;
+        }
+        .summary, .example {
+            margin-bottom: 20px;
+        }
+
+        #coding-example {
+            border: none;
+        }
+
+        #footer {
+            /* position: fixed;
+            bottom: 0.5rem;
+            left: 0; */
+            width: 100%;
+            height: 30px;
+            padding: 0;
+            /* margin-bottom: 10px; */
+            margin-bottom: -20px;
+            /* background-color: #333; */
+            color: #333;
+            text-align: center;
+            z-index: 11;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #111;
+                color: #f0f0f5;
+            }
+            .container {
+                background: rgba(40, 40, 40, 0.8);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                border: 2px solid #a1a1a15b;
+            }
+            h1 {
+                color: #e7005d;
+            }
+            h3 {
+                color: #555;
+            }
+            p {
+                color: #f0f0f5;
+            }
+            #footer {
+                color: #555;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="container">
+            <h3>Algorithm of the day - <span id="today"></span></h3>
+            <h1>{{name}}</h1>
+            <p class="summary">{{summary}}</p>
+            <p class="example">{{example}}</p>
+            <!-- <p class="step-description"><%= step_description %></p> -->
+            <p class="coding-example">
+                <pre id="coding-example"><code class="language-python">{{coding_example}}</code></pre>
+            </p>
+
+            <p id="footer">
+                Website by Björn Bosse
+            </p>
+        </div>
+    </div>
+
+    <!-- HIDDEN -->
+    <div id="timestamp" style="display: none;">
+        {{date}}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module" src="https://md-block.verou.me/md-block.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+    <script>
+        window.onload = function() {
+            const current_timestamp = parseFloat(document.getElementById('timestamp').innerText);
+            // Set the today date in the title
+            document.getElementById('today').innerText = new Date(current_timestamp * 1000).toLocaleDateString(undefined, { year:"numeric", month:"numeric", day:"numeric" });
+        }
+    </script>
+
+    <script>
+        class Particle {
+            constructor(x, y, vel_x, vel_y, diameter, speed) {
+                this.position = createVector(x, y);
+                this.velocity = createVector(vel_x, vel_y).mult(speed);
+                this.diameter = diameter;
+            }
+
+            update() {
+                this.position.add(this.velocity);
+                this.wrapAround();
+            }
+
+            show() {
+                noStroke();
+                fill(100, 75);
+                ellipse(this.position.x, this.position.y, this.diameter, this.diameter);
+            }
+
+            wrapAround() {
+                if (this.position.x > windowWidth) {
+                    this.position.x = 0;
+                } else if (this.position.x < 0) {
+                    this.position.x = windowWidth;
+                }
+
+                if (this.position.y > windowHeight) {
+                    this.position.y = 0;
+                } else if (this.position.y < 0) {
+                    this.position.y = windowHeight;
+                }
+            }
+        }
+
+        function calculateParticleAmount(density) {
+            const width = windowWidth;
+            const height = windowHeight;
+            const area = width * height;
+            return area * density;
+        }
+
+        let bodyBackground = 240;
+        let numParticles = 0;
+        const particles = [];
+        const particleDensity = 0.0002;
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+
+            numParticles = calculateParticleAmount(particleDensity);
+            for (let i = 0; i < numParticles; i++) {
+                particles.push(new Particle(random(0, windowWidth), random(0, windowHeight), random(-1, 1), random(-1, 1), random(3, 6), 0.3));
+            }
+
+            // Detect dark mode and set the background color accordingly
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                bodyBackground = 10;
+            }
+
+            frameRate(30);
+        }
+        
+        function draw() {
+            // background(240); // light
+            background(bodyBackground); // dark
+            
+            for (let i = 0; i < numParticles; i++) {
+                particles[i].update();
+                particles[i].show();
+            }
+
+            // draw lines between particles, which are close to each other
+            for (let i = 0; i < numParticles; i++) {
+                for (let j = i + 1; j < numParticles; j++) {
+                    const distance = particles[i].position.dist(particles[j].position);
+
+                    if (distance < 100) {
+                        // Calculate the width of the line based on the distance between the particles
+                        const lineWidth = map(distance, 0, 100, 2, 0.1);
+
+                        // Calculate the alpha value based on the distance between the particles
+                        const alpha = map(distance, 0, 100, 200, 0);
+
+                        stroke(120, alpha);
+                        strokeWeight(lineWidth);
+                        line(particles[i].position.x, particles[i].position.y, particles[j].position.x, particles[j].position.y);
+                    }
+                }
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+    </script>
+</body>
+</html>
