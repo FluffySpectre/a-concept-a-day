@@ -39,7 +39,7 @@ module.exports = class RSSFeed {
             return {
                 title: algorithm.name,
                 link: `https://daily-algorithm.com/prev/${dateISO}`,
-                description: algorithm.summary,
+                description: algorithm.summary + '\n\n' + algorithm.example,
                 pubDate: isoString
             };
         });
