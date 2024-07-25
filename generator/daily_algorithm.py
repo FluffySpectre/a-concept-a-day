@@ -106,14 +106,8 @@ previous_algorithms.append(new_algorithm_name)
 with open(target_dir + "/previous_algorithms.txt", "w") as file:
     file.write("\n".join(previous_algorithms))
 
-# Save the new algorithm
-dt = datetime.now()
-with open(target_dir + "/daily_algorithm.json", "w") as file:
-    # Add the now date in the new_algorithm
-    new_algorithm["date"] = datetime.timestamp(dt)
-    json.dump(new_algorithm, file, indent=2)
-
 # Save the new_algorithm to the previous folder
+dt = datetime.now()
 today = dt.strftime("%Y-%m-%d")
 with open(previous_algorithms_dir + f"/{today}.json", "w") as file:
     new_algorithm["date"] = datetime.timestamp(dt)

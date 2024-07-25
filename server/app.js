@@ -12,7 +12,6 @@ const algorithmRepository = new AlgorithmRepository();
 // app.use(express.static('public'))
 
 app.get('/', (req, res) => {
-  // Read daily_algorith.json file in the public folder
   const json = algorithmRepository.getLatestAlgorithm();
   if (!json) {
     res.status(404).send('No daily algorithm found!');
