@@ -33,7 +33,7 @@ module.exports = class RSSFeed {
         });
         const objs = algorithms.map(algorithm => {
             // Convert the unix timestamp to ISO format. Only date no time
-            const isoString = new Date(current.date * 1000).toISOString();
+            const isoString = new Date(algorithm.date * 1000).toISOString();
             const dateISO = isoString.split('T')[0];
 
             return {
