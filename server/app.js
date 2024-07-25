@@ -47,6 +47,12 @@ app.get('/prev/:date', (req, res) => {
     res.status(404).send('No algorithm for this date found!');
     return;
   }
+
+  const json = JSON.parse(fs.readFileSync(filename));
+  if (!json) {
+    res.status(404).send('No algorithm for this date found!');
+    return;
+  }
   
   // Render the index.html file with the json data
   // and send the rendered html to the client
