@@ -1,10 +1,10 @@
+const fs = require('fs');
+const path = require('path');
 const { Builder } = require('xml2js');
 
 module.exports = class RSSFeed {
-    constructor() {
-    }
-
     get_feed_object() {
+        const current = JSON.parse(fs.readFileSync(path.join(__dirname, 'public/daily_algorithm.json'), 'utf8'));
         return {
             rss: {
                 $: {
@@ -13,8 +13,8 @@ module.exports = class RSSFeed {
                 channel: {
                     title: 'Daily Algorithm',
                     link: 'https://daily-algorithm.com',
-                    description: 'Daily algorithm problems and solutions.',
-                    pubDate: new Date().toISOString(),
+                    description: 'Daily Algorithm RSS Feed',
+                    pubDate: new Date(current.date * 1000).toISOString(),
                     item: this.get_algorithms()
                 }
             }
@@ -22,20 +22,40 @@ module.exports = class RSSFeed {
     }
 
     get_algorithms() {
-        return [
-            {
-                title: 'Algorithm 1',
-                link: 'https://daily-algorithm.com/prev/2024-07-25',
-                description: 'This is the first algorithm.',
-                pubDate: new Date().toISOString()
-            },
-            {
-                title: 'Algorithm 2',
-                link: 'https://daily-algorithm.com/prev/2024-07-24',
-                description: 'This is the second algorithm.',
-                pubDate: new Date().toISOString()
-            }
-        ];
+        // Get the previous algorithms from the /public/previous folder
+        // and return them as an array of objects
+        const previousFolder = path.join(__dirname, 'public/previous');
+        const files = fs.readdirSync(previousFolder);
+        const jsonFiles = files.filter(file => file.endsWith('.json'));
+        const algorithms = jsonFiles.map(file => {
+            const algorithm = fs.readFileSync(path.join(previousFolder, file), 'utf8');
+            return JSON.parse(algorithm);
+        });
+        const objs = algorithms.map(algorithm => {
+            // Convert the unix timestamp to ISO format. Only date no time
+            const isoString = new Date(current.date * 1000).toISOString();
+            const dateISO = isoString.split('T')[0];
+
+            return {
+                title: algorithm.name,
+                link: `https://daily-algorithm.com/prev/${dateISO}`,
+                description: algorithm.summary,
+                pubDate: isoString
+            };
+        });
+
+        // Add the current algorithm to the list
+        const current = JSON.parse(fs.readFileSync(path.join(__dirname, 'public/daily_algorithm.json'), 'utf8'));
+        const isoString = new Date(current.date * 1000).toISOString();
+        const dateISO = isoString.split('T')[0];
+        objs.unshift({
+            title: current.name,
+            link: `https://daily-algorithm.com/prev/${dateISO}`,
+            description: current.summary,
+            pubDate: isoString
+        });
+
+        return objs;
     }
 
     render() {

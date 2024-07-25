@@ -40,6 +40,21 @@ app.get('/json', (req, res) => {
   res.json(json);
 });
 
+app.get('/prev/:date', (req, res) => {
+  const date = req.params.date;
+  const filename = __dirname + `/public/previous/${date}.json`;
+  if (!fs.existsSync(filename)) {
+    res.status(404).send('No algorithm for this date found!');
+    return;
+  }
+  
+  // Render the index.html file with the json data
+  // and send the rendered html to the client
+  const templateHTML = fs.readFileSync(__dirname + '/public/index.html', 'utf8');
+  const templateRenderer = new TemplateRenderer(json);
+  res.send(templateRenderer.render(templateHTML));
+});
+
 app.get('/rss', (req, res) => {
   const rssFeed = new RSSFeed();
   res.set('Content-Type', 'application/rss+xml');
