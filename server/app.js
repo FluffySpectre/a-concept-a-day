@@ -1,8 +1,9 @@
-const express = require('express')
+const express = require('express');
 const fs = require('fs');
-const app = express()
-const port = 3000
+const app = express();
+const port = 3000;
 const TemplateRenderer = require('./TemplateRenderer');
+const RSSFeed = require('./RSSFeed');
 
 function getDailyAlgorithmData() {
   const filename = __dirname + '/public/daily_algorithm.json';
@@ -28,7 +29,7 @@ app.get('/', (req, res) => {
   const templateHTML = fs.readFileSync(__dirname + '/public/index.html', 'utf8');
   const templateRenderer = new TemplateRenderer(json);
   res.send(templateRenderer.render(templateHTML));
-})
+});
 
 app.get('/json', (req, res) => {
   const json = getDailyAlgorithmData();
@@ -37,9 +38,15 @@ app.get('/json', (req, res) => {
     return;
   }
   res.json(json);
-})
+});
+
+app.get('/rss', (req, res) => {
+  const rssFeed = new RSSFeed();
+  res.set('Content-Type', 'application/rss+xml');
+  res.send(rssFeed.render());
+});
 
 app.listen(port, () => {
   const datetime = new Date().toISOString();
   console.log(`[${datetime}] Daily Algorithm Server listening on port ${port}`)
-})
+});
