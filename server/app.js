@@ -1,24 +1,19 @@
 const express = require('express');
 const fs = require('fs');
-const app = express();
-const port = 3000;
 const TemplateRenderer = require('./TemplateRenderer');
 const RSSFeed = require('./RSSFeed');
+const AlgorithmRepository = require('./AlgorithmRepository');
 
-function getDailyAlgorithmData() {
-  const filename = __dirname + '/public/daily_algorithm.json';
-  if (!fs.existsSync(filename)) {
-    return null;
-  }
-  const data = fs.readFileSync(filename);
-  return JSON.parse(data);
-}
+const app = express();
+const port = 3000;
+
+const algorithmRepository = new AlgorithmRepository();
 
 // app.use(express.static('public'))
 
 app.get('/', (req, res) => {
   // Read daily_algorith.json file in the public folder
-  const json = getDailyAlgorithmData();
+  const json = algorithmRepository.getAlgorithmOfToday();
   if (!json) {
     res.status(404).send('No daily algorithm found!');
     return;
@@ -32,7 +27,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/json', (req, res) => {
-  const json = getDailyAlgorithmData();
+  const json = algorithmRepository.getAlgorithmOfToday();
   if (!json) {
     res.status(404).send('No daily algorithm found!');
     return;
@@ -42,13 +37,8 @@ app.get('/json', (req, res) => {
 
 app.get('/prev/:date', (req, res) => {
   const date = req.params.date;
-  const filename = __dirname + `/public/previous/${date}.json`;
-  if (!fs.existsSync(filename)) {
-    res.status(301).redirect('/');
-    return;
-  }
 
-  const json = JSON.parse(fs.readFileSync(filename));
+  const json = algorithmRepository.getAlgorithmOfDate(date);
   if (!json) {
     res.status(301).redirect('/');
     return;
