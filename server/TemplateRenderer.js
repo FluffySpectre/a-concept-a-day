@@ -1,4 +1,4 @@
-export class TemplateRenderer {
+module.exports = class TemplateRenderer {
     constructor(data) {
         this.data = data;
     }
