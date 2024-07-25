@@ -7,7 +7,7 @@ module.exports = class RSSFeed {
   }
 
   get_feed_object() {
-    const current = this.algorithmRepository.getAlgorithmOfToday();
+    const current = this.algorithmRepository.getLatestAlgorithm();
     return {
       rss: {
         $: {

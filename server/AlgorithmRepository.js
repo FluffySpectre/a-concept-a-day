@@ -2,9 +2,16 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = class AlgorithmRepository {
-  getAlgorithmOfToday() {
-    const todayISODate = new Date().toISOString().split('T')[0];
-    return this.getAlgorithmOfDate(todayISODate);
+  getLatestAlgorithm() {
+    const newestDate = fs.readdirSync( __dirname + '/public/previous')
+        .filter(file => file.endsWith('.json')) // Filter json files
+        .sort((a, b) => { // Sort by date
+            if (a < b) return 1;
+            if (a > b) return -1;
+            return 0;
+        })[0]
+        .match(/\d{4}-\d{2}-\d{2}/)[0]; // Filter the date from the filename
+    return this.getAlgorithmOfDate(newestDate);
   }
 
   getAlgorithmOfDate(date) {

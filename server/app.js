@@ -13,7 +13,7 @@ const algorithmRepository = new AlgorithmRepository();
 
 app.get('/', (req, res) => {
   // Read daily_algorith.json file in the public folder
-  const json = algorithmRepository.getAlgorithmOfToday();
+  const json = algorithmRepository.getLatestAlgorithm();
   if (!json) {
     res.status(404).send('No daily algorithm found!');
     return;
@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/json', (req, res) => {
-  const json = algorithmRepository.getAlgorithmOfToday();
+  const json = algorithmRepository.getLatestAlgorithm();
   if (!json) {
     res.status(404).send('No daily algorithm found!');
     return;
