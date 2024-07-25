@@ -40,5 +40,6 @@ app.get('/json', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Daily Algorithm Server listening on port ${port}`)
+  const datetime = new Date().toISOString();
+  console.log(`[${datetime}] Daily Algorithm Server listening on port ${port}`)
 })
