@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('node:fs/promises');
+const path = require('node:path');
 const TemplateRenderer = require('./TemplateRenderer');
 const RSSFeed = require('./RSSFeed');
 const AlgorithmRepository = require('./AlgorithmRepository');
@@ -9,7 +10,7 @@ const port = 3000;
 
 const algorithmRepository = new AlgorithmRepository();
 
-// app.use(express.static('public'))
+app.use('/public', express.static(path.resolve(__dirname, 'public')));
 
 app.get('/', async (req, res) => {
   const json = await algorithmRepository.getLatestAlgorithm();
