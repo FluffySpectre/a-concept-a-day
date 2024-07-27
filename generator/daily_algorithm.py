@@ -48,16 +48,15 @@ prompt = (
     f"Your answer should be in {answer_language} and contain the following information about this algorithm:\n"
     "- Name of the algorithm\n"
     "- A brief, concise summary of the algorithm in simple terms\n"
-    #"- A description of the algorithm in the form of 1. Step 1\n2. Step 2.\nStep n. etc.\n"
+    "- A description of the algorithm in the form of 1. Step 1\n2. Step 2.\nStep n. etc. Format it as HTML list."
     "- An interesting practical example of the application of the algorithm\n\n"
-    #"- An interesting example implementation in Python\n\n"
     "Ignore the following algorithms:\n"
     f"{previous_algorithms_str}\n\n"
     "Give your answer as a JSON object in the following format:\n"
     "{"
     "\"name\": \"Name of the algorithm\","
     "\"summary\": \"A brief, concise summary of the algorithm in simple terms\","
-    #"\"step_description\": \"A description of the algorithm in the form of 1. Step 1\n2. Step 2.\nStep n. etc.\","
+    "\"step_description\": \"A description of the algorithm in the form of 1. Step 1\n2. Step 2.\nStep n. etc. Format it as HTML list.\","
     "\"example\": \"An interesting practical example of the application of the algorithm\""
     "}\n\n"
     "Respond only with the JSON object and no further explanation!"
@@ -85,7 +84,7 @@ while new_algorithm is None and retry_count > 0:
 
 # Generate a coding example for the new algorithm
 response = prompt_ollama(
-    f"Generate a Python example for the algorithm {new_algorithm['name']}. DO NOT format your response with Markdown!!! Reply only with the code example and code comments but no further explanation!"
+    f"Generate a Python example for the algorithm {new_algorithm['name']}. Reply only with the code example and code comments but no further explanation!"
 )
 response = response.strip()
 # If the response contains ``` then remove it
