@@ -34,13 +34,13 @@ module.exports = class RSSFeed {
       const isoString = new Date(algorithm.date * 1000).toISOString();
       const dateISO = isoString.split('T')[0];
 
-      const bodyHTML = '<h4>Summary</h4><br>' + 
-        algorithm.summary + '<br><br>' +
-        '<h4>Usage</h4><br>' +
-        algorithm.example + '<br><br>' +
-        '<h4>Steps</h4><br>' +
-        algorithm.step_description + '<br><br>' +
-        '<h4>Coding example</h4><br>' +
+      const bodyHTML = '<h4>Summary</h4>' + 
+        algorithm.summary + '<br>' +
+        '<h4>Usage</h4>' +
+        algorithm.example + '<br>' +
+        '<h4>Steps</h4>' +
+        algorithm.step_description + '<br>' +
+        '<h4>Coding example</h4>' +
         '<pre><code>' + algorithm.coding_example + '</code></pre>';
 
       return {
