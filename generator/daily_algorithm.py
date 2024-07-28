@@ -29,7 +29,7 @@ def start_ollama():
 
 def prompt_ollama(prompt):
     response = ollama.chat(
-        model="llama3.1",
+        model="llama3.1:8b-instruct-q6_K",
         messages=[
         {
             "role": "user",
