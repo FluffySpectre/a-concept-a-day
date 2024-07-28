@@ -36,11 +36,11 @@ module.exports = class RSSFeed {
 
       const bodyHTML = '<h4>Summary</h4>' + 
         algorithm.summary + '<br>' +
-        '<h4>Usage</h4>' +
+        '<h4>Use Case</h4>' +
         algorithm.example + '<br>' +
         '<h4>Steps</h4>' +
         algorithm.step_description + '<br>' +
-        '<h4>Coding example</h4>' +
+        '<h4>Code Example</h4>' +
         '<pre><code>' + algorithm.coding_example + '</code></pre>';
 
       return {
