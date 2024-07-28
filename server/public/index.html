@@ -34,9 +34,21 @@
             <p class="step-by-step">{{step_description}}</p>
 
             <h4>Code Example</h4>
-            <p class="coding-example">
-                <pre id="coding-example"><code class="language-python">{{coding_example}}</code></pre>
-            </p>
+
+            {{#if coding_example}}
+                <p class="coding-example">
+                    <pre id="coding-example"><code class="language-python">{{coding_example}}</code></pre>
+                </p>
+            {{/if}}
+
+            {{#if coding_examples}}
+                {{#coding_examples}}
+                <h4>{{item.language_display}}</h4>
+                <p class="coding-example">
+                    <pre id="coding-example"><code class="language-python">{{item.code}}</code></pre>
+                </p>
+                {{/coding_examples}}
+            {{/if}}
 
             <p id="footer">
                 Website by <span><a href="https://sennio.de" target="_blank">Björn Bosse</a></span>

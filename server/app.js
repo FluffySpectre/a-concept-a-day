@@ -1,7 +1,6 @@
 const express = require('express');
-const fs = require('node:fs/promises');
 const path = require('node:path');
-const TemplateRenderer = require('./TemplateRenderer');
+const { renderTemplateFile } = require('./template');
 const RSSFeed = require('./RSSFeed');
 const AlgorithmRepository = require('./AlgorithmRepository');
 
@@ -21,9 +20,7 @@ app.get('/', async (req, res) => {
 
   // Render the index.html file with the json data
   // and send the rendered html to the client
-  const templateHTML = await fs.readFile(__dirname + '/public/index.html', 'utf8');
-  const templateRenderer = new TemplateRenderer(json);
-  res.send(templateRenderer.render(templateHTML));
+  res.send(await renderTemplateFile(__dirname + '/public/index.html', json));
 });
 
 app.get('/json', async (req, res) => {
@@ -46,9 +43,7 @@ app.get('/prev/:date', async (req, res) => {
   
   // Render the index.html file with the json data
   // and send the rendered html to the client
-  const templateHTML = await fs.readFile(__dirname + '/public/index.html', 'utf8');
-  const templateRenderer = new TemplateRenderer(json);
-  res.send(templateRenderer.render(templateHTML));
+  res.send(await renderTemplateFile(__dirname + '/public/index.html', json));
 });
 
 app.get('/rss', async (req, res) => {
