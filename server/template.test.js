@@ -1,5 +1,35 @@
 const { renderTemplate } = require('./template');
 
+test('should render a template with conditionals', () => {
+  const template = `
+    {{#if show}}
+      <p>Show me if show is true</p>
+    {{/if}}
+    {{#if not show}}
+      <p>Show me if show is false</p>
+    {{/if}}
+    {{#if intVal = 42}}
+      <p>Show me if intVal is 42</p>
+    {{/if}}
+    {{#if strVal = Hello}}
+      <p>Show me if strVal is Hello</p>
+    {{/if}}
+  `;
+
+  const data = {
+    show: true,
+    intVal: 42,
+    strVal: 'Hello',
+  };
+
+  const renderedTemplate = renderTemplate(template, data);
+
+  expect(renderedTemplate).toContain('<p>Show me if show is true</p>');
+  expect(renderedTemplate).not.toContain('<p>Show me if show is false</p>');
+  expect(renderedTemplate).toContain('<p>Show me if intVal is 42</p>');
+  expect(renderedTemplate).toContain('<p>Show me if strVal is Hello</p>');
+});
+
 test('should render a template with all supported features', () => {
   const template = `
     <div>

@@ -1,5 +1,6 @@
 const { Builder } = require('xml2js');
 const AlgorithmRepository = require('./AlgorithmRepository');
+const { renderTemplate } = require('./template');
 
 module.exports = class RSSFeed {
   constructor() {
@@ -34,20 +35,25 @@ module.exports = class RSSFeed {
       const isoString = new Date(algorithm.date * 1000).toISOString();
       const dateISO = isoString.split('T')[0];
 
-      const bodyHTML = '<h4>Summary</h4>' + 
-        algorithm.summary + '<br>' +
-        '<h4>Use Case</h4>' +
-        algorithm.example + '<br>' +
-        '<h4>Steps</h4>' +
-        algorithm.step_description + '<br>' +
-        '<h4>Code Example</h4>' +
-        '<pre><code>' + algorithm.coding_example + '</code></pre>';
+      const rssTemplate = `
+        {{#content}}
+        <h4>{{item.title}}</h4>
 
+        {{#if item.type = code}}
+        <p><pre><code>{{item.content}}</code></pre></p>
+        {{/if}}
+
+        {{#if item.type = text}}
+        <p>{{item.content}}</p>
+        {{/if}}
+        {{/content}}
+      `;
+      
       return {
         title: algorithm.name,
         link: `https://daily-algorithm.com/prev/${dateISO}`,
-        description: algorithm.summary,
-        'content:encoded': bodyHTML,
+        description: algorithm.content[0].content,
+        'content:encoded': renderTemplate(rssTemplate, algorithm),
         pubDate: isoString
       };
     });

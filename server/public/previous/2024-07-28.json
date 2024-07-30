@@ -1,8 +1,31 @@
 {
   "name": "Breadth-First Search (BFS) Algorithm",
-  "summary": "A method for traversing or searching a graph or tree data structure level by level, starting from a given source node.",
-  "step_description": "<ol><li>Choose the root node or the source node of the graph/tree.</li><li>Create an empty queue and enqueue the root node.</li><li>Mark the current node as visited (e.g., by coloring it in red).</li><li>Dequeue a node from the front of the queue.</li><li>For each neighbor of the dequeued node that has not been visited yet, mark it as visited and enqueue it to the back of the queue.</li><li>If the queue is empty, the traversal is complete. Otherwise, repeat steps 3-5 until the queue is empty.</li></ol>",
-  "example": "Finding all reachable nodes from a given node in a social network graph, where each node represents a user and edges represent friendships.",
-  "coding_example": "from collections import deque\n\ndef bfs(graph, root):\n    # Create a queue to hold vertices to be visited\n    queue = deque([root])\n    \n    # Create a set to keep track of visited vertices\n    visited = set()\n    \n    while queue:\n        vertex = queue.popleft()  # Dequeue the next vertex\n        \n        if vertex not in visited:  # If it's not been visited before\n            print(vertex)  # Print the vertex\n            \n            # Mark it as visited and add its neighbors to the queue\n            visited.add(vertex)\n            for neighbor in graph[vertex]:\n                queue.append(neighbor)\n\n# Example usage:\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F'],\n    'D': [],\n    'E': ['F'],\n    'F': []\n}\n\nbfs(graph, 'A')",
+  "content": [
+    {
+      "title": "Summary",
+      "content": "A method for traversing or searching a graph or tree data structure level by level, starting from a given source node.",
+      "type": "text"
+    },
+    {
+      "title": "Use Case",
+      "content": "Finding all reachable nodes from a given node in a social network graph, where each node represents a user and edges represent friendships.",
+      "type": "text"
+    },
+    {
+      "title": "Fun Fact",
+      "content": "The Rabin-Karp algorithm can find any substring in O(n) time, not just a specific string, making it useful for tasks beyond string searching.",
+      "type": "text"
+    },
+    {
+      "title": "Steps",
+      "content": "<ol><li>Choose the root node or the source node of the graph/tree.</li><li>Create an empty queue and enqueue the root node.</li><li>Mark the current node as visited (e.g., by coloring it in red).</li><li>Dequeue a node from the front of the queue.</li><li>For each neighbor of the dequeued node that has not been visited yet, mark it as visited and enqueue it to the back of the queue.</li><li>If the queue is empty, the traversal is complete. Otherwise, repeat steps 3-5 until the queue is empty.</li></ol>",
+      "type": "text"
+    },
+    {
+      "title": "Code Example",
+      "content": "from collections import deque\n\ndef bfs(graph, root):\n    # Create a queue to hold vertices to be visited\n    queue = deque([root])\n    \n    # Create a set to keep track of visited vertices\n    visited = set()\n    \n    while queue:\n        vertex = queue.popleft()  # Dequeue the next vertex\n        \n        if vertex not in visited:  # If it's not been visited before\n            print(vertex)  # Print the vertex\n            \n            # Mark it as visited and add its neighbors to the queue\n            visited.add(vertex)\n            for neighbor in graph[vertex]:\n                queue.append(neighbor)\n\n# Example usage:\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F'],\n    'D': [],\n    'E': ['F'],\n    'F': []\n}\n\nbfs(graph, 'A')",
+      "type": "code"
+    }
+  ],
   "date": 1722173771.509893
 }

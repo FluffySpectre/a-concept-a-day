@@ -1,8 +1,31 @@
 {
-  "name": "Sweep Line Algorithm",
-  "summary": "A method for solving geometric problems involving points, lines, and circles by processing events in a particular order.",
-  "step_description": "<ol>1. Preprocess the input to create an event list of all relevant points (e.g., intersection points of edges), sorted by their x-coordinate.<br>2. Initialize the sweep line at negative infinity and start iterating through the event list, updating the sweep line as necessary (i.e., moving it to a new position when a point is encountered).<br>3. For each event in the list, perform any required calculations or operations (e.g., checking for intersections or calculating distances) using the current state of the sweep line.<br>4. Repeat steps 2 and 3 until all events have been processed.<br></ol>",
-  "example": "A game that features a scrolling background with obstacles, such as platforms or enemies, which need to be intersected by the player's character. The Sweep Line Algorithm can be used to efficiently determine the order in which these intersections occur, allowing for accurate collision detection and response.",
-  "coding_example": "class Event:\n    def __init__(self, time, x):\n        self.time = time\n        self.x = x\n\n\nclass SweepLineAlgorithm:\n    def __init__(self, events):\n        self.events = sorted(events)\n\n    def sweep_line(self):\n        # Initialize sweep line\n        s = {}\n\n        for e in self.events:\n            # Process all points with same x value\n            if e.x not in s:\n                s[e.x] = []\n            # Add event to list of active intervals at position x\n            s[e.x].append(e)\n\n        # Iterate through sorted x values and process events\n        for x in range(min(s.keys()), max(s.keys()) + 1):\n            if x in s:\n                # Process all active events at current x value\n                for e in s[x]:\n                    print(f\"Event: {e.time}, Point: ({x},{e.x})\")\n\n# Example usage:\nevents = [\n    Event(3, 6),\n    Event(2, 8),\n    Event(1, 9),\n    Event(4, 7),\n    Event(5, 5),\n]\n\nalgorithm = SweepLineAlgorithm(events)\nalgorithm.sweep_line()",
+  "name": "Rabin-Karp Algorithm",
+  "content": [
+    {
+      "title": "Summary",
+      "content": "A string searching algorithm that uses hashing to find any one of a set of pattern strings in a text. It's efficient for large patterns.",
+      "type": "text"
+    },
+    {
+      "title": "Use Case",
+      "content": "A plagiarism checker that scans millions of documents on the internet for specific phrases or sentences, flagging potential copyright infringement.",
+      "type": "text"
+    },
+    {
+      "title": "Fun Fact",
+      "content": "The Rabin-Karp algorithm can find any substring in O(n) time, not just a specific string, making it useful for tasks beyond string searching.",
+      "type": "text"
+    },
+    {
+      "title": "Steps",
+      "content": "<ol><li>Choose a prime number 'p' and a value 'd'. Initialize the hash values for the pattern and the first window of the text.</li><li>For each character in the text, calculate the hash value for the current window by taking a linear combination of its characters using the chosen prime 'p' and 'd', and then compare it with the pattern's hash value.</li><li>If there's a match, check for exact matches by comparing characters. If not, slide the window to the right by one character.</li></ol>",
+      "type": "text"
+    },
+    {
+      "title": "Code Example",
+      "content": "def rabin_karp(text, pattern):\n    \"\"\"\n    Rabin-Karp string searching algorithm.\n\n    Args:\n        text (str): The input text to search.\n        pattern (str): The substring to search for.\n\n    Returns:\n        int: The first occurrence of the pattern in the text, or -1 if not found.\n    \"\"\"\n\n    # Calculate the hash value of the pattern\n    d = 256  # Number of possible characters in ASCII\n    q = 101  # A prime number used as a modulus to ensure the hash is within a reasonable range\n    n = len(pattern)\n    m = len(text)\n\n    # Compute the hash of the pattern and the initial hash of the text\n    p_hash = 0\n    t_hash = 0\n\n    # Calculate the base value for the rolling hash (d^(n-1))\n    h = 1\n    for _ in range(n - 1):\n        h = (h * d) % q\n\n    # Compute initial hashes\n    for i in range(n):\n        p_hash = ((d * p_hash + ord(pattern[i])) % q)\n        t_hash = ((d * t_hash + ord(text[i])) % q)\n\n    # Compare hash values, and if they're equal then compare characters one-by-one\n    for s in range(m - n + 1):\n        if t_hash == p_hash:\n            match = True\n\n            # Compare actual characters to confirm the match\n            for i in range(n):\n                if text[s + i] != pattern[i]:\n                    match = False\n                    break\n\n            # If there's a match, return the index of the match in the text\n            if match:\n                return s\n\n        # Roll the hash value for the next comparison by removing the first character and adding the next one from the text\n        t_hash = (d * (t_hash - ord(text[s]) * h) + ord(text[s + n])) % q\n\n        if t_hash < 0:\n            t_hash += q\n\n    # If no match is found, return -1\n    return -1\n\n\n# Example usage\ntext = \"ABCCDDAEFGH\"\npattern = \"CD\"\n\nindex = rabin_karp(text, pattern)\nprint(\"Pattern found at index\", index) if index != -1 else print(\"Pattern not found\")",
+      "type": "code"
+    }
+  ],
   "date": 1722124549.801242
 }

@@ -8,7 +8,7 @@ const renderTemplateFile = async (filePath, data) => {
 const renderTemplate = (template, data) => {
   // Function to process conditionals
   const processConditionals = (template, data) => {
-    return template.replace(/{{\s*#if\s+(not\s+)?([\w.]+)\s*}}([\s\S]*?){{\s*\/if\s*}}/g, (match, not, condition, innerTemplate) => {
+    return template.replace(/{{\s*#if\s+(not\s+)?([\w.]+)(?:\s*=\s*([\w.]+))?\s*}}([\s\S]*?){{\s*\/if\s*}}/g, (match, not, condition, valueToCheckAgainst, innerTemplate) => {
       const keys = condition.split('.');
       let value = data;
       for (let k of keys) {
@@ -17,6 +17,9 @@ const renderTemplate = (template, data) => {
           value = false;
           break;
         }
+      }
+      if (valueToCheckAgainst !== undefined) {
+        value = value == valueToCheckAgainst;
       }
       return not ? !value ? innerTemplate : '' : value ? innerTemplate : '';
     });
@@ -28,7 +31,11 @@ const renderTemplate = (template, data) => {
       if (!Array.isArray(data[key])) {
         return match;
       }
-      return data[key].map(item => replaceVariables(innerTemplate, { item })).join('');
+      return data[key].map(item => {
+        let loopContent = replaceVariables(innerTemplate, { item });
+        loopContent = processConditionals(loopContent, { item });
+        return loopContent;
+      }).join('');
     });
   };
 
@@ -48,8 +55,8 @@ const renderTemplate = (template, data) => {
   };
 
   // Run all the processing functions
-  let rendered = processConditionals(template, data);
-  rendered = processLoops(rendered, data);
+  let rendered = processLoops(template, data);
+  rendered = processConditionals(rendered, data);
   rendered = replaceVariables(rendered, data);
 
   return rendered;
@@ -73,6 +80,9 @@ const renderTemplate = (template, data) => {
 //     {{#if not code_example}}
 //       <p>Show me if condition is false</p>
 //     {{/if}}
+//     {{ #if int_val = 42 }}
+//     <p>Show me if condition is equal to 42</p>
+//     {{ /if }}
 //   </div>
 // `;
 
@@ -90,6 +100,7 @@ const renderTemplate = (template, data) => {
 //     { language: 'Python', code: 'Python code' },
 //     { language: 'C#', code: 'CSharp Code' },
 //   ],
+//   int_val: 42,
 // };
 
 module.exports = {

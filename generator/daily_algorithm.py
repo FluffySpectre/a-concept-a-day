@@ -75,12 +75,19 @@ while new_algorithm is None and retry_count > 0:
         print(response)
         retry_count -= 1
 
-# Generate a step-by-step description for the new algorithm
-# response = prompt_ollama(
-#     f"Generate a step-by-step description for the algorithm {new_algorithm['name']}. Format your response with HTML. Reply only with the step-by-step description and no further explanation!"
-# )
-# response = response.strip()
-# new_algorithm["step_description"] = response
+contents = []
+contents.append({ "title": "Summary", "content": new_algorithm["summary"], "type": "text"  })
+contents.append({ "title": "Use Case", "content": new_algorithm["example"], "type": "text"  })
+
+# Generate a fun fact for the new algorithm
+response = prompt_ollama(
+    f"Tell me a Fun-Fact about the algorithm {new_algorithm['name']}. If there is no fun-fact answer with '0'. Don't make something up! Reply only with the fun-fact or '0' but no further explanation!"
+)
+response = response.strip()
+if response != "0":
+    contents.append({ "title": "Fun Fact", "content": response.strip(), "type": "text" })
+
+contents.append({ "title": "Steps", "content": new_algorithm["step_description"], "type": "text"  })
 
 # Generate a coding example for the new algorithm
 response = prompt_ollama(
@@ -94,7 +101,8 @@ if response.startswith("```"):
         response = response[3:]
 if response.endswith("```"):
     response = response[:-3]
-new_algorithm["coding_example"] = response.strip()
+contents.append({ "title": "Code Example", "content": response.strip(), "type": "code" })
+
 # new_algorithm["coding_examples"] = [{"language": "python", "language_display": "Python", "code": response}]
 
 # Add the new algorithm to the list of previous_algorithms
@@ -105,11 +113,17 @@ previous_algorithms.append(new_algorithm_name)
 with open(target_dir + "/previous_algorithms.txt", "w") as file:
     file.write("\n".join(previous_algorithms))
 
+# Format the new algorithm object
+final_new_algorithm = { 
+    "name": new_algorithm["name"],
+    "content": contents
+}
+
 # Save the new_algorithm to the previous folder
 dt = datetime.now()
 today = dt.strftime("%Y-%m-%d")
 with open(previous_algorithms_dir + f"/{today}.json", "w") as file:
-    new_algorithm["date"] = datetime.timestamp(dt)
-    json.dump(new_algorithm, file, indent=2)
+    final_new_algorithm["date"] = datetime.timestamp(dt)
+    json.dump(final_new_algorithm, file, indent=2)
 
 print("Daily algorithm was updated!")
