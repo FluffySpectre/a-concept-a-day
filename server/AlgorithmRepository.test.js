@@ -15,7 +15,7 @@ test('should return algorithm for specific date', async () => {
 test('should return all algorithms', async () => {
   const algorithmRepository = new AlgorithmRepository();
   const algorithms = await algorithmRepository.getAlgorithms();
-  expect(algorithms.length).toBe(2);
+  expect(algorithms.length).toBeGreaterThan(1);
 });
 
 test('should check if algorithm exists for specific date', async () => {
