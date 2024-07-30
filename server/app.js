@@ -17,10 +17,7 @@ app.get('/', async (req, res) => {
     res.status(404).send('No daily algorithm found!');
     return;
   }
-
-  // Render the index.html file with the json data
-  // and send the rendered html to the client
-  res.send(await renderTemplateFile(__dirname + '/public/index.html', json));
+  res.send(await renderTemplateFile(path.join(__dirname, 'public', 'index.html'), json));
 });
 
 app.get('/json', async (req, res) => {
@@ -34,16 +31,12 @@ app.get('/json', async (req, res) => {
 
 app.get('/prev/:date', async (req, res) => {
   const date = req.params.date;
-
   const json = await algorithmRepository.getAlgorithmOfDate(date);
   if (!json) {
     res.status(301).redirect('/');
     return;
   }
-
-  // Render the index.html file with the json data
-  // and send the rendered html to the client
-  res.send(await renderTemplateFile(__dirname + '/public/index.html', json));
+  res.send(await renderTemplateFile(path.join(__dirname, 'public', 'index.html'), json));
 });
 
 app.get('/rss', async (req, res) => {
@@ -55,5 +48,5 @@ app.get('/rss', async (req, res) => {
 
 app.listen(port, () => {
   const datetime = new Date().toISOString();
-  console.log(`[${datetime}] Daily Algorithm Server listening on port ${port}`)
+  console.log(`[${datetime}] Daily Algorithm Server listening on port ${port}`);
 });

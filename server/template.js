@@ -9,48 +9,28 @@ const renderTemplate = (template, data) => {
   // Function to process conditionals
   const processConditionals = (template, data) => {
     return template.replace(/{{\s*#if\s+(not\s+)?([\w.]+)(?:\s*=\s*([\w.]+))?\s*}}([\s\S]*?){{\s*\/if\s*}}/g, (match, not, condition, valueToCheckAgainst, innerTemplate) => {
-      const keys = condition.split('.');
-      let value = data;
-      for (let k of keys) {
-        value = value[k];
-        if (value === undefined) {
-          value = false;
-          break;
-        }
-      }
-      if (valueToCheckAgainst !== undefined) {
-        value = value == valueToCheckAgainst;
-      }
-      return not ? !value ? innerTemplate : '' : value ? innerTemplate : '';
+      const value = condition.split('.').reduce((acc, key) => acc && acc[key], data);
+      const isTruthy = valueToCheckAgainst !== undefined ? value == valueToCheckAgainst : Boolean(value);
+      return not ? !isTruthy ? innerTemplate : '' : isTruthy ? innerTemplate : '';
     });
   };
 
   // Function to process loops
   const processLoops = (template, data) => {
     return template.replace(/{{\s*#(\w+)\s*}}([\s\S]*?){{\s*\/\1\s*}}/g, (match, key, innerTemplate) => {
-      if (!Array.isArray(data[key])) {
+      const items = data[key];
+      if (!Array.isArray(items)) {
         return match;
       }
-      return data[key].map(item => {
-        let loopContent = replaceVariables(innerTemplate, { item });
-        loopContent = processConditionals(loopContent, { item });
-        return loopContent;
-      }).join('');
+      return items.map(item => processConditionals(replaceVariables(innerTemplate, { item }), { item })).join('');
     });
   };
 
   // Function to replace variables
   const replaceVariables = (template, data) => {
     return template.replace(/{{\s*([\w.]+)\s*}}/g, (match, key) => {
-      const keys = key.split('.');
-      let value = data;
-      for (let k of keys) {
-        value = value[k];
-        if (value === undefined) {
-          return match;
-        }
-      }
-      return value;
+      const value = key.split('.').reduce((acc, k) => acc && acc[k], data);
+      return value !== undefined ? value : match;
     });
   };
 

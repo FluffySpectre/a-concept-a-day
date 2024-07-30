@@ -8,7 +8,7 @@ module.exports = class RSSFeed {
   }
 
   async get_feed_object() {
-    const current = await this.algorithmRepository.getLatestAlgorithm();
+    const { date } = await this.algorithmRepository.getLatestAlgorithm();
     return {
       rss: {
         $: {
@@ -19,7 +19,7 @@ module.exports = class RSSFeed {
           title: 'Daily Algorithm',
           link: 'https://daily-algorithm.com',
           description: 'Daily Algorithm RSS Feed',
-          pubDate: new Date(current.date * 1000).toISOString(),
+          pubDate: new Date(date * 1000).toISOString(),
           item: await this.get_algorithms()
         }
       }
@@ -30,42 +30,37 @@ module.exports = class RSSFeed {
     // Get the previous algorithms from the /public/previous folder
     // and return them as an array of objects
     const algorithms = await this.algorithmRepository.getAlgorithms();
-    const objs = algorithms.map(algorithm => {
+    return algorithms.map(({ name, date, content }) => {
       // Convert the unix timestamp to ISO format. Only date no time
-      const isoString = new Date(algorithm.date * 1000).toISOString();
+      const isoString = new Date(date * 1000).toISOString();
       const dateISO = isoString.split('T')[0];
-
+  
       const rssTemplate = `
         {{#content}}
         <h4>{{item.title}}</h4>
-
-        {{#if item.type = code}}
+  
+        {{#if item.type === 'code'}}
         <p><pre><code>{{item.content}}</code></pre></p>
         {{/if}}
-
-        {{#if item.type = text}}
+  
+        {{#if item.type === 'text'}}
         <p>{{item.content}}</p>
         {{/if}}
         {{/content}}
       `;
-      
+  
       return {
-        title: algorithm.name,
+        title: name,
         link: `https://daily-algorithm.com/prev/${dateISO}`,
-        description: algorithm.content[0].content,
-        'content:encoded': renderTemplate(rssTemplate, algorithm),
+        description: content[0].content,
+        'content:encoded': renderTemplate(rssTemplate, { content }),
         pubDate: isoString
       };
     });
-
-    return objs;
   }
 
   async render() {
     const feed = await this.get_feed_object();
-    const builder = new Builder({
-      cdata: true
-    });
-    return builder.buildObject(feed);
+    return new Builder({ cdata: true }).buildObject(feed);
   }
 }
