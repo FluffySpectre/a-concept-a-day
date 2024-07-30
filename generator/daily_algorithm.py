@@ -80,12 +80,12 @@ contents.append({ "title": "Summary", "content": new_algorithm["summary"], "type
 contents.append({ "title": "Use Case", "content": new_algorithm["example"], "type": "text"  })
 
 # Generate a fun fact for the new algorithm
-response = prompt_ollama(
-    f"Tell me a Fun-Fact about the algorithm {new_algorithm['name']}. If there is no fun-fact answer with '0'. Don't make something up! Reply only with the fun-fact or '0' but no further explanation!"
-)
-response = response.strip()
-if response != "0":
-    contents.append({ "title": "Fun Fact", "content": response.strip(), "type": "text" })
+# response = prompt_ollama(
+#     f"Tell me a Fun-Fact about the algorithm {new_algorithm['name']}. If there is no fun-fact answer with '0'. Don't make something up! Reply only with the fun-fact or '0' but no further explanation!"
+# )
+# response = response.strip()
+# if response != "0":
+#     contents.append({ "title": "Fun Fact", "content": response.strip(), "type": "text" })
 
 contents.append({ "title": "Steps", "content": new_algorithm["step_description"], "type": "text"  })
 
