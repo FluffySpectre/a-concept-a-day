@@ -22,9 +22,19 @@ const renderTemplate = (template, data) => {
     });
   };
 
+  // Function to process loops
+  const processLoops = (template, data) => {
+    return template.replace(/{{\s*#(\w+)\s*}}([\s\S]*?){{\s*\/\1\s*}}/g, (match, key, innerTemplate) => {
+      if (!Array.isArray(data[key])) {
+        return match;
+      }
+      return data[key].map(item => replaceVariables(innerTemplate, { item })).join('');
+    });
+  };
+
   // Function to replace variables
-  const replaceVariables = (str, data) => {
-    return str.replace(/{{\s*([\w.]+)\s*}}/g, (match, key) => {
+  const replaceVariables = (template, data) => {
+    return template.replace(/{{\s*([\w.]+)\s*}}/g, (match, key) => {
       const keys = key.split('.');
       let value = data;
       for (let k of keys) {
@@ -37,23 +47,9 @@ const renderTemplate = (template, data) => {
     });
   };
 
-  // Function to process loops
-  const processLoops = (template, data) => {
-    return template.replace(/{{\s*#(\w+)\s*}}([\s\S]*?){{\s*\/\1\s*}}/g, (match, key, innerTemplate) => {
-      if (!Array.isArray(data[key])) {
-        return match;
-      }
-      return data[key].map(item => replaceVariables(innerTemplate, { item })).join('');
-    });
-  };
-
-  // Process conditionals first
+  // Run all the processing functions
   let rendered = processConditionals(template, data);
-
-  // Process loops next
   rendered = processLoops(rendered, data);
-
-  // Then replace variables
   rendered = replaceVariables(rendered, data);
 
   return rendered;
@@ -63,6 +59,8 @@ const renderTemplate = (template, data) => {
 // const template = `
 //   <div>
 //     <h1>{{title}}</h1>
+//     <h2>{{nested.val}}</h2>
+//     <h3>{{nested.level2.val}}</h3>
 //     {{#items}}
 //       <p>{{item}}</p>
 //     {{/items}}
@@ -82,6 +80,12 @@ const renderTemplate = (template, data) => {
 //   title: 'Example',
 //   items: ['Item 1', 'Item 2'],
 //   code_example: 'Python code example',
+//   nested: {
+//     val: 'Single nested value',
+//     level2: {
+//       val: 'Double nested value'
+//     }
+//   },
 //   examples: [
 //     { language: 'Python', code: 'Python code' },
 //     { language: 'C#', code: 'CSharp Code' },
