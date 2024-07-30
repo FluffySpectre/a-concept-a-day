@@ -40,7 +40,7 @@ app.get('/prev/:date', async (req, res) => {
     res.status(301).redirect('/');
     return;
   }
-  
+
   // Render the index.html file with the json data
   // and send the rendered html to the client
   res.send(await renderTemplateFile(__dirname + '/public/index.html', json));

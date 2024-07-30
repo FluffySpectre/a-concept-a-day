@@ -8,27 +8,22 @@ const renderTemplateFile = async (filePath, data) => {
 const renderTemplate = (template, data) => {
   // Function to process conditionals
   const processConditionals = (template, data) => {
-    return template.replace(/{{\s*#if\s+(not\s+)?([\w.]+)\s*}}([\s\S]*?){{\s*\/if\s*}}/g, (match, not, condition, innerTemplate) => {
+    return template.replace(/{{\s*#if\s+(not\s+)?([\w.]+)\s*}}([\s\S]*?){{\s*\/if\s*}}/g, (_, not, condition, innerTemplate) => {
       const keys = condition.split('.');
       let value = data;
       for (let k of keys) {
+        if (typeof value !== 'object' || !(k in value)) break;
         value = value[k];
-        if (value === undefined) {
-          value = false;
-          break;
-        }
       }
-      return not ? !value ? innerTemplate : '' : value ? innerTemplate : '';
+      return (not ? !value : value) ? innerTemplate : '';
     });
   };
 
   // Function to process loops
   const processLoops = (template, data) => {
     return template.replace(/{{\s*#(\w+)\s*}}([\s\S]*?){{\s*\/\1\s*}}/g, (match, key, innerTemplate) => {
-      if (!Array.isArray(data[key])) {
-        return match;
-      }
-      return data[key].map(item => replaceVariables(innerTemplate, { item })).join('');
+      if (!Array.isArray(data[key])) return match;
+      return Array.isArray(data[key]) && data[key].length ? data[key].map(item => replaceVariables(innerTemplate, { item })).join('') : match;
     });
   };
 
@@ -38,10 +33,8 @@ const renderTemplate = (template, data) => {
       const keys = key.split('.');
       let value = data;
       for (let k of keys) {
+        if (typeof value !== 'object' || !(k in value)) return match;
         value = value[k];
-        if (value === undefined) {
-          return match;
-        }
       }
       return value;
     });

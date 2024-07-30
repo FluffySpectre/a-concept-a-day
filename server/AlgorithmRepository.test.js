@@ -3,7 +3,7 @@ const AlgorithmRepository = require('./AlgorithmRepository');
 test('should return the latest algorithm', async () => {
   const algorithmRepository = new AlgorithmRepository();
   const latestAlgorithm = await algorithmRepository.getLatestAlgorithm();
-  expect(latestAlgorithm).toBeTruthy();
+  expect(latestAlgorithm.name).toBe('Breadth-First Search (BFS) Algorithm');
 });
 
 test('should return algorithm for specific date', async () => {
