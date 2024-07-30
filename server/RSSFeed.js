@@ -39,11 +39,11 @@ module.exports = class RSSFeed {
         {{#content}}
         <h4>{{item.title}}</h4>
   
-        {{#if item.type === 'code'}}
+        {{#if item.type = code}}
         <p><pre><code>{{item.content}}</code></pre></p>
         {{/if}}
   
-        {{#if item.type === 'text'}}
+        {{#if item.type = text}}
         <p>{{item.content}}</p>
         {{/if}}
         {{/content}}
