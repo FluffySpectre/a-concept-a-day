@@ -17,7 +17,7 @@ app.get('/', async (req, res) => {
     res.status(404).send('No daily algorithm found!');
     return;
   }
-  res.send(await renderTemplateFile(path.join(__dirname, 'public', 'index.html'), json));
+  res.send(await renderTemplateFile(path.join('views', 'index.html'), json));
 });
 
 app.get('/json', async (req, res) => {
@@ -36,7 +36,7 @@ app.get('/prev/:date', async (req, res) => {
     res.status(301).redirect('/');
     return;
   }
-  res.send(await renderTemplateFile(path.join(__dirname, 'public', 'index.html'), json));
+  res.send(await renderTemplateFile(path.join('views', 'index.html'), json));
 });
 
 app.get('/rss', async (req, res) => {

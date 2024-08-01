@@ -10,7 +10,7 @@ sys.dont_write_bytecode = True
 answer_language = "English"
 target_dir = "/home/daily-algorithm/da-backend/server/public"
 previous_algorithms_dir = f"{target_dir}/previous"
-previous_algorithms_file = f"{target_dir}/previous_algorithms.txt"
+previous_algorithms_file = "previous_algorithms.txt"
 
 # Try to read the list of previous_algorithms
 previous_algorithms = []
@@ -86,7 +86,6 @@ def generate_new_algorithm():
     retry_count = 10
     while new_algorithm is None and retry_count > 0:
         prompt = generate_prompt()
-        print(prompt)
         response = prompt_ollama(prompt)
         try:
             new_algorithm = json.loads(response)
