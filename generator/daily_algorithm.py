@@ -59,6 +59,7 @@ def generate_prompt():
         "- A brief, concise summary of the algorithm in simple terms\n"
         "- The single steps of the algorithm formatted as HTML ordered list\n"
         "- An interesting practical example of the application of the algorithm\n"
+        "- The time complexity of the algorithm\n"
         "- An Python code example for the algorithm\n\n"
         "Ignore the following algorithms:\n"
         f"{previous_algorithms_str}\n\n"
@@ -68,6 +69,7 @@ def generate_prompt():
         "\"summary\": \"A brief, concise summary of the algorithm in simple terms\","
         "\"step_description\": \"The single steps of the algorithm formatted as HTML ordered list\","
         "\"example\": \"An interesting practical example of the application of the algorithm\","
+        "\"time_complexity\": \"The time complexity of the algorithm\","
         "\"example_code\": \"An Python code example for the algorithm\""
         "}\n\n"
         "Respond only with the JSON object and no further explanation!"
@@ -78,6 +80,7 @@ def generate_contents(algorithm):
     contents.append({"title": "Summary", "content": algorithm["summary"], "type": "text"})
     contents.append({"title": "Use Case", "content": algorithm["example"], "type": "text"})
     contents.append({"title": "Steps", "content": algorithm["step_description"], "type": "text"})
+    contents.append({"title": "Complexity", "content": algorithm["time_complexity"], "type": "text"})
     contents.append({"title": "Code Example", "content": algorithm["example_code"], "type": "code"})
     return contents
 
