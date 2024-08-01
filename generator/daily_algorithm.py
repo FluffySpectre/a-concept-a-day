@@ -72,6 +72,7 @@ def generate_prompt():
         "\"complexity\": \"The time and space complexity of the algorithm\","
         "\"example_code\": \"An Python code example for the algorithm\""
         "}\n\n"
+        "Use \\n for new lines and \\\" for double quotes.\n"
         "Respond only with the JSON object and no further explanation!"
     )
 
@@ -91,12 +92,17 @@ def generate_new_algorithm():
         prompt = generate_prompt()
         response = prompt_ollama(prompt)
         try:
-            new_algorithm = json.loads(response)
+            filtered_response = filter_response(response)
+            new_algorithm = json.loads(filtered_response)
         except:
             print("Failed to parse response. Trying again...")
             print(response)
             retry_count -= 1
     return new_algorithm
+
+def filter_response(response):
+    response = response.replace("\\*", "*")
+    return response
 
 # Make sure ollama is running
 if not is_ollama_running():
