@@ -3,8 +3,7 @@ const path = require('path');
 
 module.exports = class AlgorithmRepository {
   async getLatestAlgorithm() {
-    const dirPath = path.join(__dirname, 'public', 'previous');
-    const files = await fs.readdir(dirPath);
+    const files = await fs.readdir('algorithms');
     
     const newestDate = files
       .filter(file => file.endsWith('.json'))
@@ -17,7 +16,7 @@ module.exports = class AlgorithmRepository {
   }
 
   async getAlgorithmOfDate(date) {
-    const filename = path.join(__dirname, 'public', 'previous', `${date}.json`);
+    const filename = path.join('algorithms', `${date}.json`);
     const exists = await this.existsAlgorithmForDate(date);
     if (!exists) return null;
     const data = await fs.readFile(filename, 'utf8');
@@ -25,19 +24,19 @@ module.exports = class AlgorithmRepository {
   }
 
   async getAlgorithms() {
-    const previousFolder = path.join(__dirname, 'public', 'previous');
-    const files = await fs.readdir(previousFolder);
+    const folder = 'algorithms';
+    const files = await fs.readdir(folder);
     const jsonFiles = files.filter(file => file.endsWith('.json'));
 
     return Promise.all(jsonFiles.map(async file => {
-      const algorithm = await fs.readFile(path.join(previousFolder, file), 'utf8');
+      const algorithm = await fs.readFile(path.join(folder, file), 'utf8');
       return JSON.parse(algorithm);
     }));
   }
 
   async existsAlgorithmForDate(date) {
     try {
-      await fs.access(path.join(__dirname, 'public', 'previous', `${date}.json`), fs.constants.R_OK);
+      await fs.access(path.join('algorithms', `${date}.json`), fs.constants.R_OK);
       return true;
     } catch {
       return false;

@@ -8,8 +8,8 @@ sys.dont_write_bytecode = True
 
 # Config
 answer_language = "English"
-target_dir = "/home/daily-algorithm/da-backend/server/public"
-previous_algorithms_dir = f"{target_dir}/previous"
+target_dir = "/home/daily-algorithm/da-backend/server"
+algorithms_dir = f"{target_dir}/algorithms"
 previous_algorithms_file = "previous_algorithms.txt"
 
 # Try to read the list of previous_algorithms
@@ -47,7 +47,7 @@ def save_new_algorithm(algorithm):
     dt = datetime.now()
     today = dt.strftime("%Y-%m-%d")
     algorithm["date"] = datetime.timestamp(dt)
-    with open(f"{previous_algorithms_dir}/{today}.json", "w") as file:
+    with open(f"{algorithms_dir}/{today}.json", "w") as file:
         json.dump(algorithm, file, indent=2)
 
 def generate_prompt():
@@ -72,7 +72,6 @@ def generate_prompt():
         "\"complexity\": \"The time and space complexity of the algorithm\","
         "\"example_code\": \"An Python code example for the algorithm\""
         "}\n\n"
-        "Use \\n for new lines and \\\" for double quotes.\n"
         "Respond only with the JSON object and no further explanation!"
     )
 
@@ -92,8 +91,8 @@ def generate_new_algorithm():
         prompt = generate_prompt()
         response = prompt_ollama(prompt)
         try:
-            filtered_response = filter_response(response)
-            new_algorithm = json.loads(filtered_response)
+            response = filter_response(response)
+            new_algorithm = json.loads(response)
         except:
             print("Failed to parse response. Trying again...")
             print(response)
@@ -101,6 +100,7 @@ def generate_new_algorithm():
     return new_algorithm
 
 def filter_response(response):
+    response = '\\n'.join(response.splitlines())
     response = response.replace("\\*", "*")
     return response
 
@@ -124,7 +124,7 @@ if new_algorithm:
     # Format the new algorithm object
     final_new_algorithm = {"name": new_algorithm["name"], "content": contents}
 
-    # Save the new_algorithm to the previous folder
+    # Save the new_algorithm to the algorithms folder
     save_new_algorithm(final_new_algorithm)
 
     print("Daily algorithm was updated!")

@@ -27,8 +27,7 @@ module.exports = class RSSFeed {
   }
 
   async get_algorithms() {
-    // Get the previous algorithms from the /public/previous folder
-    // and return them as an array of objects
+    // Get the algorithms from the repository
     const algorithms = await this.algorithmRepository.getAlgorithms();
     return algorithms.map(({ name, date, content }) => {
       // Convert the unix timestamp to ISO format. Only date no time
