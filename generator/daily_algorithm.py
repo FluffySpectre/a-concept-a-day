@@ -35,7 +35,8 @@ def prompt_ollama(prompt):
                 "role": "user",
                 "content": prompt,
             },
-        ]
+        ],
+        format="json",
     )
     return response["message"]["content"]
 
