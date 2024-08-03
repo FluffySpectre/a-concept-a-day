@@ -1,24 +1,24 @@
 import sys
 import subprocess
 import json
+import logging
 from datetime import datetime
+from pathlib import Path
 import ollama
 
 sys.dont_write_bytecode = True
 
 # Config
-answer_language = "English"
-target_dir = "/home/daily-algorithm/da-backend/server"
-algorithms_dir = f"{target_dir}/algorithms"
-previous_algorithms_file = "previous_algorithms.txt"
+ANSWER_LANGUAGE = "English"
+TARGET_DIR = Path("/home/daily-algorithm/da-backend/server")
+ALGORITHMS_DIR = TARGET_DIR / "algorithms"
+PREVIOUS_ALGORITHMS_FILE = Path("previous_algorithms.txt")
+
+# Logging setup
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 # Try to read the list of previous_algorithms
-previous_algorithms = []
-try:
-    with open(previous_algorithms_file, "r") as file:
-        previous_algorithms = file.read().splitlines()
-except FileNotFoundError:
-    pass
+previous_algorithms = PREVIOUS_ALGORITHMS_FILE.read_text().splitlines() if PREVIOUS_ALGORITHMS_FILE.exists() else []
 
 def is_ollama_running():
     result = subprocess.run(["pgrep", "ollama"], capture_output=True, text=True)
@@ -30,38 +30,31 @@ def start_ollama():
 def prompt_ollama(prompt):
     response = ollama.chat(
         model="llama3.1:8b-instruct-q6_K",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            },
-        ],
+        messages=[{"role": "user", "content": prompt}],
         format="json",
     )
     return response["message"]["content"]
 
 def save_previous_algorithms(algorithms):
-    with open(previous_algorithms_file, "w") as file:
-        file.write("\n".join(algorithms))
+    PREVIOUS_ALGORITHMS_FILE.write_text("\n".join(algorithms))
 
 def save_new_algorithm(algorithm):
-    dt = datetime.now()
-    today = dt.strftime("%Y-%m-%d")
-    algorithm["date"] = datetime.timestamp(dt)
-    with open(f"{algorithms_dir}/{today}.json", "w") as file:
+    today = datetime.now().strftime("%Y-%m-%d")
+    algorithm["date"] = datetime.now().timestamp()
+    with open(ALGORITHMS_DIR / f"{today}.json", "w") as file:
         json.dump(algorithm, file, indent=2)
 
 def generate_prompt():
     previous_algorithms_str = "\n".join(previous_algorithms)
     return (
         f"Please suggest an interesting and useful algorithm that a software developer and game developer should know.\n"
-        f"Your answer should be in {answer_language} and contain the following information about this algorithm:\n"
+        f"Your answer should be in {ANSWER_LANGUAGE} and contain the following information about this algorithm:\n"
         "- Name of the algorithm\n"
         "- A brief, concise summary of the algorithm in simple terms\n"
         "- The single steps of the algorithm formatted as HTML ordered list\n"
         "- An interesting practical example of the application of the algorithm\n"
         "- The time and space complexity of the algorithm\n"
-        "- An Python code example for the algorithm\n\n"
+        "- A Python code example for the algorithm\n\n"
         "Ignore the following algorithms:\n"
         f"{previous_algorithms_str}\n\n"
         "Give your answer as a properly escaped JSON object in the following format:\n"
@@ -77,13 +70,13 @@ def generate_prompt():
     )
 
 def generate_contents(algorithm):
-    contents = []
-    contents.append({"title": "Summary", "content": algorithm["summary"], "type": "text"})
-    contents.append({"title": "Use Case", "content": algorithm["example"], "type": "text"})
-    contents.append({"title": "Steps", "content": algorithm["step_description"], "type": "text"})
-    contents.append({"title": "Complexity", "content": algorithm["complexity"], "type": "text"})
-    contents.append({"title": "Code Example", "content": algorithm["example_code"], "type": "code"})
-    return contents
+    return [
+        {"title": "Summary", "content": algorithm["summary"], "type": "text"},
+        {"title": "Use Case", "content": algorithm["example"], "type": "text"},
+        {"title": "Steps", "content": algorithm["step_description"], "type": "text"},
+        {"title": "Complexity", "content": algorithm["complexity"], "type": "text"},
+        {"title": "Code Example", "content": algorithm["example_code"], "type": "code"},
+    ]
 
 def generate_new_algorithm():
     new_algorithm = None
@@ -94,20 +87,18 @@ def generate_new_algorithm():
         try:
             response = filter_response(response)
             new_algorithm = json.loads(response)
-        except:
-            print("Failed to parse response. Trying again...")
-            print(response)
+        except json.JSONDecodeError:
+            logging.warning("Failed to parse response. Trying again...")
+            logging.debug(response)
             retry_count -= 1
     return new_algorithm
 
 def filter_response(response):
-    response = '\\n'.join(response.splitlines())
-    response = response.replace("\\*", "*")
-    return response
+    return '\\n'.join(response.splitlines()).replace("\\*", "*")
 
 # Make sure ollama is running
 if not is_ollama_running():
-    print("Ollama is getting started...")
+    logging.info("Ollama is getting started...")
     start_ollama()
 
 new_algorithm = generate_new_algorithm()
@@ -128,4 +119,4 @@ if new_algorithm:
     # Save the new_algorithm to the algorithms folder
     save_new_algorithm(final_new_algorithm)
 
-    print("Daily algorithm was updated!")
+    logging.info("Daily algorithm was updated!")
