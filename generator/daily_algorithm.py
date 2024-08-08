@@ -82,11 +82,11 @@ def generate_new_algorithm():
     retry_count = 10
     while new_algorithm is None and retry_count > 0:
         prompt = generate_prompt()
-        response = prompt_ai(prompt)
         try:
+            response = prompt_ai(prompt)
             response = filter_response(response)
             new_algorithm = json.loads(response)
-        except json.JSONDecodeError:
+        except:
             logging.warning("Failed to parse response. Trying again...")
             logging.debug(response)
             retry_count -= 1
