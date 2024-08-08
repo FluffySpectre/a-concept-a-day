@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 # from classes.ai_clients import OllamaClient
-from generator.classes.ai_clients import GroqClient
+from classes.ai_clients import GroqClient
 
 # Load env
 load_dotenv()
