@@ -1,16 +1,22 @@
 import sys
-import subprocess
+sys.dont_write_bytecode = True
+
+import os
+from dotenv import load_dotenv
 import json
 import logging
 from datetime import datetime
 from pathlib import Path
-import ollama
 
-sys.dont_write_bytecode = True
+# from classes.ai_clients import OllamaClient
+from generator.classes.ai_clients import GroqClient
+
+# Load env
+load_dotenv()
 
 # Config
-ANSWER_LANGUAGE = "English"
-TARGET_DIR = Path("/home/daily-algorithm/da-backend/server")
+ANSWER_LANGUAGE = os.environ.get("ANSWER_LANGUAGE", "English")
+TARGET_DIR = Path(os.environ.get("TARGET_DIR", "../server"))
 ALGORITHMS_DIR = TARGET_DIR / "algorithms"
 PREVIOUS_ALGORITHMS_FILE = Path("previous_algorithms.txt")
 
@@ -20,20 +26,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Try to read the list of previous_algorithms
 previous_algorithms = PREVIOUS_ALGORITHMS_FILE.read_text().splitlines() if PREVIOUS_ALGORITHMS_FILE.exists() else []
 
-def is_ollama_running():
-    result = subprocess.run(["pgrep", "ollama"], capture_output=True, text=True)
-    return result.stdout.strip().isnumeric()
+# Setup ai client
+# ai_client = OllamaClient()
+ai_client = GroqClient(api_key=os.environ.get("AI_API_KEY", ""))
 
-def start_ollama():
-    subprocess.run(["ollama", "list"], capture_output=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-def prompt_ollama(prompt):
-    response = ollama.chat(
-        model="llama3.1:8b-instruct-q6_K",
-        messages=[{"role": "user", "content": prompt}],
-        format="json",
-    )
-    return response["message"]["content"]
+def prompt_ai(prompt):
+    system_prompt = "You are a brilliant software developer who knows many different algorithms and their use cases."
+    return ai_client.prompt_json(prompt, system_prompt)
 
 def save_previous_algorithms(algorithms):
     PREVIOUS_ALGORITHMS_FILE.write_text("\n".join(algorithms))
@@ -83,7 +82,7 @@ def generate_new_algorithm():
     retry_count = 10
     while new_algorithm is None and retry_count > 0:
         prompt = generate_prompt()
-        response = prompt_ollama(prompt)
+        response = prompt_ai(prompt)
         try:
             response = filter_response(response)
             new_algorithm = json.loads(response)
@@ -95,11 +94,6 @@ def generate_new_algorithm():
 
 def filter_response(response):
     return '\\n'.join(response.splitlines()).replace("\\*", "*")
-
-# Make sure ollama is running
-if not is_ollama_running():
-    logging.info("Ollama is getting started...")
-    start_ollama()
 
 new_algorithm = generate_new_algorithm()
 
