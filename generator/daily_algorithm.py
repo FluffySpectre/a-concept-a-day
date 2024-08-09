@@ -8,8 +8,7 @@ import logging
 from datetime import datetime
 from pathlib import Path
 
-# from classes.ai_clients import OllamaClient
-from classes.ai_clients import GroqClient
+from classes.ai_clients import AIClientFactory
 
 # Load env
 load_dotenv()
@@ -22,13 +21,6 @@ PREVIOUS_ALGORITHMS_FILE = Path("previous_algorithms.txt")
 
 # Logging setup
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-
-# Try to read the list of previous_algorithms
-previous_algorithms = PREVIOUS_ALGORITHMS_FILE.read_text().splitlines() if PREVIOUS_ALGORITHMS_FILE.exists() else []
-
-# Setup ai client
-# ai_client = OllamaClient()
-ai_client = GroqClient(api_key=os.environ.get("AI_API_KEY", ""))
 
 def prompt_ai(prompt):
     system_prompt = "You are a brilliant software developer who knows many different algorithms and their use cases."
@@ -53,7 +45,7 @@ def generate_prompt():
         "- The single steps of the algorithm formatted as HTML ordered list\n"
         "- An interesting practical example of the application of the algorithm\n"
         "- The time and space complexity of the algorithm\n"
-        "- A Python code example for the algorithm\n\n"
+        "- A descriptive and easy to understand Python code example for the algorithm\n\n"
         "Ignore the following algorithms:\n"
         f"{previous_algorithms_str}\n\n"
         "Give your answer as a properly escaped JSON object in the following format:\n"
@@ -63,7 +55,7 @@ def generate_prompt():
         "\"step_description\": \"The single steps of the algorithm formatted as HTML ordered list\","
         "\"example\": \"An interesting practical example of the application of the algorithm\","
         "\"complexity\": \"The time and space complexity of the algorithm\","
-        "\"example_code\": \"An Python code example for the algorithm\""
+        "\"example_code\": \"A descriptive and easy to understand Python code example for the algorithm\""
         "}\n\n"
         "Respond only with the JSON object and no further explanation!"
     )
@@ -94,6 +86,12 @@ def generate_new_algorithm():
 
 def filter_response(response):
     return '\\n'.join(response.splitlines()).replace("\\*", "*")
+
+# Try to read the list of previous_algorithms
+previous_algorithms = PREVIOUS_ALGORITHMS_FILE.read_text().splitlines() if PREVIOUS_ALGORITHMS_FILE.exists() else []
+
+# Setup ai client
+ai_client = AIClientFactory.get_client()
 
 new_algorithm = generate_new_algorithm()
 

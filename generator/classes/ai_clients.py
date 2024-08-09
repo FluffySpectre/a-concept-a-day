@@ -1,6 +1,7 @@
 import abc
 import subprocess
 import logging
+import os
 import ollama
 from groq import Groq
 
@@ -8,6 +9,16 @@ class BaseAIClient(abc.ABC):
     @abc.abstractmethod
     def prompt_json(self, prompt) -> str:
         pass
+
+class AIClientFactory():
+    @staticmethod
+    def get_client() -> BaseAIClient:
+        name = os.environ.get("AI_PROVIDER", "ollama")
+        if name == "ollama":
+            return OllamaClient()
+        elif name == "groq":
+            return GroqClient(api_key=os.environ.get("AI_API_KEY", ""))
+        raise Exception(f"{name} is not a supported AI provider!")
 
 class OllamaClient(BaseAIClient):
     def __init__(self, autostart_ollama = True):
