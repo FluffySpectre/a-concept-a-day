@@ -7,6 +7,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
+from fuzzywuzzy import fuzz, process
 
 from classes.ai_clients import AIClientFactory
 
@@ -60,6 +61,17 @@ def generate_prompt():
         "Respond only with the JSON object and no further explanation!"
     )
 
+def check_duplicate(new_algorithm, prev_algorithms):
+    # Fuzzy search for duplicate algorithm name in previous algorithms
+    threshold = 80  # (0-100)
+    lower_case_previous_algorithms = [algorithm.lower() for algorithm in prev_algorithms]
+    matches = process.extract(new_algorithm.lower(), lower_case_previous_algorithms, scorer=fuzz.ratio)
+    filtered_matches = [match for match in matches if match[1] >= threshold]
+    if len(filtered_matches) > 0:
+        return True
+    else:
+        return False
+
 def generate_contents(algorithm):
     return [
         {"title": "Summary", "content": algorithm["summary"], "type": "text"},
@@ -78,6 +90,12 @@ def generate_new_algorithm():
             response = prompt_ai(prompt)
             response = filter_response(response)
             new_algorithm = json.loads(response)
+
+            # If the algorithm is a duplicate, try again
+            if check_duplicate(new_algorithm["name"], previous_algorithms):
+                new_algorithm = None
+                logging.warning(f"{new_algorithm["name"]}: Duplicate algorithm. Trying again...")
+                retry_count -= 1
         except:
             logging.warning("Failed to parse response. Trying again...")
             logging.debug(response)
@@ -111,4 +129,4 @@ if new_algorithm:
     # Save the new_algorithm to the algorithms folder
     save_new_algorithm(final_new_algorithm)
 
-    logging.info("Daily algorithm was updated!")
+    logging.info(f"Daily algorithm was updated! New algorithm: {final_new_algorithm["name"]}")
