@@ -94,7 +94,7 @@ def generate_new_algorithm():
             # If the algorithm is a duplicate, try again
             if check_duplicate(new_algorithm["name"], previous_algorithms):
                 new_algorithm = None
-                logging.warning(f"{new_algorithm["name"]}: Duplicate algorithm. Trying again...")
+                logging.warning(new_algorithm["name"] + ": Duplicate algorithm. Trying again...")
                 retry_count -= 1
         except:
             logging.warning("Failed to parse response. Trying again...")
@@ -129,4 +129,4 @@ if new_algorithm:
     # Save the new_algorithm to the algorithms folder
     save_new_algorithm(final_new_algorithm)
 
-    logging.info(f"Daily algorithm was updated! New algorithm: {final_new_algorithm["name"]}")
+    logging.info("Daily algorithm was updated! New algorithm: " + final_new_algorithm["name"])
