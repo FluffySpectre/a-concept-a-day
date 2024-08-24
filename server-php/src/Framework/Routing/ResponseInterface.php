@@ -1,0 +1,66 @@
+<?php
+
+namespace DA\Framework\Routing;
+
+/**
+ * Interface which describes a Response
+ * 
+ * @author Björn Bosse
+ */
+interface ResponseInterface {
+    /**
+     * Returns the body of the Response
+     * 
+     * @return string
+     */
+    function getBody(): string;
+
+    /**
+     * Returns the header list of the Response
+     * 
+     * @return array
+     */
+    function getHeader(): array;
+
+    /**
+     * Returns the response code
+     * 
+     * @return int
+     */
+    function getStatus(): int;
+
+    /**
+     * Sets the body of the response to the given text
+     * 
+     * @param mixed $text
+     * @return ResponseInterface
+     */
+    function text($text): ResponseInterface;
+
+    /**
+     * Encodes the data as JSON and sets it as the body of the response and returns it
+     * 
+     * @param mixed $data
+     * @return ResponseInterface
+     */
+    function json($data): ResponseInterface;
+
+    /**
+     * Adds the given status code to the response and returns it
+     * 
+     * @param int $status
+     * @return ResponseInterface
+     */
+    function status($status): ResponseInterface;
+
+    /**
+     * Adds a cookie to the reponse and returns it
+     * 
+     * @param string $name
+     * @param string $value 
+     * @param int|null $maxAge
+     * @param string|null $path
+     * @return ResponseInterface
+     */
+    function cookie(string $name, string $value, int|null $maxAge, string|null $path): ResponseInterface;
+}
