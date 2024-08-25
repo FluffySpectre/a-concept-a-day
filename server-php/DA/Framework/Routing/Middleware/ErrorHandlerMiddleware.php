@@ -1,7 +1,8 @@
 <?php
 
-namespace DA\Framework\Routing;
+namespace DA\Framework\Routing\Middleware;
 
+use DA\Framework\Routing\HTTPCodes;
 use DA\Framework\Routing\MiddlewareInterface;
 use DA\Framework\Routing\RequestInterface;
 use DA\Framework\Routing\ResponseInterface;

@@ -54,7 +54,7 @@ interface ResponseInterface {
     function status($status): ResponseInterface;
 
     /**
-     * Adds a cookie to the reponse and returns it
+     * Adds a cookie to the response and returns it
      * 
      * @param string $name
      * @param string $value 
@@ -63,4 +63,13 @@ interface ResponseInterface {
      * @return ResponseInterface
      */
     function cookie(string $name, string $value, int|null $maxAge, string|null $path): ResponseInterface;
+
+    /**
+     * Adds the given header information to the response and returns it
+     * 
+     * @param string $name
+     * @param string $value
+     * @return ResponseInterface
+     */
+    function header(string $name, string $value): ResponseInterface;
 }

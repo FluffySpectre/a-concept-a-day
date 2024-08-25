@@ -68,4 +68,12 @@ class Response implements ResponseInterface {
         $this->header[] = "Set-Cookie: $name=$value; HttpOnly $maxAgeAttribute $pathAttribute";
         return $this;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function header(string $name, string $value): ResponseInterface {
+        $this->header[] = "$name: $value";
+        return $this;
+    }
 }
