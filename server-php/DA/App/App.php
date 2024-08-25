@@ -2,6 +2,7 @@
 
 namespace DA\App;
 
+use DA\Framework\Config\Config;
 use DA\Framework\DI\DIContainer;
 use DA\Framework\Routing\RequestInterface;
 use DA\Framework\Routing\ResponseInterface;
@@ -20,8 +21,7 @@ class App {
         $dependencies = [];
         $diContainer = new DIContainer($dependencies);
 
-        // $basePath = Config::get("basepath");
-        $basePath = "server-php/public";
+        $basePath = Config::get("BASE_PATH");
         $router = new Router($diContainer, $basePath);
         $router->setAllowedHTTPMethods(["GET"]);
 
