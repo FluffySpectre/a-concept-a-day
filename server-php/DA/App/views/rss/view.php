@@ -1,9 +1,3 @@
-<?php
-function convertTimestamp($timestamp) {
-    $date = new DateTime("@{$timestamp}");
-    return $date->format("Y-m-d\TH:i:s");
-}
-?>
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
     <channel>
@@ -35,3 +29,8 @@ function convertTimestamp($timestamp) {
         <?php endforeach; ?>
     </channel>
 </rss>
+<?php
+function convertTimestamp($timestamp) {
+    $date = new DateTime("@{$timestamp}");
+    return $date->format("Y-m-d\TH:i:s");
+}
