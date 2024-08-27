@@ -46,6 +46,14 @@ interface ResponseInterface {
     function json($data): ResponseInterface;
 
     /**
+     * Sets the body of the response to the given data without setting the content type header
+     * 
+     * @param mixed $data
+     * @return ResponseInterface
+     */
+    function body($data): ResponseInterface;
+
+    /**
      * Adds the given status code to the response and returns it
      * 
      * @param int $status
@@ -72,4 +80,12 @@ interface ResponseInterface {
      * @return ResponseInterface
      */
     function header(string $name, string $value): ResponseInterface;
+
+    /**
+     * Adds a location header to the response and returns it
+     * 
+     * @param string $url
+     * @return ResponseInterface
+     */
+    function redirect(string $url): ResponseInterface;
 }

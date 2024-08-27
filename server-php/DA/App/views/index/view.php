@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Algorithm</title>
+   
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-twilight.min.css" integrity="sha512-ch9ThmrGmkVrVm9tL/puGmSfzQps4yk9LDrWuswb65ZnPOIKuYZBen1yn3ez/fEbgeBqrU/IJ443OqgallfE9Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <?= $cssIncludes ?>
+</head>
+<body>
+    <div class="main-container">
+        <div class="container">
+            <div class="header-bar">
+                <h3>Algorithm of the day - <span id="today"></span></h3>
+                <div class="rss-button" onclick="registerRSS()">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="currentColor"><path d="M196.64-120q-31.64 0-54.14-22.53T120-196.7q0-31.63 22.53-54.13 22.53-22.5 54.17-22.5 31.63 0 54.13 22.53 22.5 22.53 22.5 54.16 0 31.64-22.53 54.14T196.64-120ZM700-120q0-121-45.33-225.83Q609.33-450.67 530-530q-79.33-79.33-184.22-124.67Q240.9-700 120-700v-100q142 0 265 53t216 146q93 93 146 216t53 265H700Zm-252 0q0-69-25.53-129.15Q396.94-309.3 352-355.33q-44.67-46-103.85-72-59.19-26-128.15-26v-100q90 0 167.5 33.83t135.6 93.12q58.09 59.28 91.49 137.83Q548-210 548-120H448Z"/></svg>
+                </div>
+            </div>
+            <h1><?= $name ?></h1>
+
+            <!-- Content blocks -->
+            <?php foreach ($content as $item): ?>
+                <h4><?= $item["title"] ?></h4>
+                
+                <?php if ($item["type"] === "code"): ?>
+                    <p class="coding-example">
+                        <pre id="coding-example"><code class="language-python"><?= $item["content"] ?></code></pre>
+                    </p>
+                <?php endif; ?>
+
+                <?php if ($item["type"] === "text"): ?>
+                    <p><?= $item["content"] ?></p>
+                <?php endif; ?>
+            <?php endforeach; ?>
+            <!-- End of content blocks -->
+
+            <p id="footer">
+                Website by <span><a href="https://sennio.de" target="_blank">Björn Bosse</a></span>
+            </p>
+        </div>
+    </div>
+
+    <!-- HIDDEN -->
+    <div id="timestamp" style="display: none;">
+        <?= $date ?>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+    <script src="static/particle-background.js"></script>
+
+    <?= $jsIncludes ?>
+</body>
+</html>

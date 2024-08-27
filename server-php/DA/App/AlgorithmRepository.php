@@ -2,13 +2,15 @@
 
 namespace DA\App;
 
-use \Exception;
+class AlgorithmRepository {
+    protected string $algorithmsPath;
 
-class AlgorithmRepository
-{
-    public function getLatestAlgorithm()
-    {
-        $files = scandir("algorithms");
+    public function __construct($path) {
+        $this->algorithmsPath = $path;
+    }
+
+    public function getLatestAlgorithm() {
+        $files = scandir($this->algorithmsPath);
 
         $newestDate = null;
         foreach ($files as $file) {
@@ -23,58 +25,50 @@ class AlgorithmRepository
         return $this->getAlgorithmOfDate($newestDate);
     }
 
-    public function getAlgorithmOfDate($date)
-    {
+    public function getAlgorithmOfDate($date) {
         if (!$this->existsAlgorithmForDate($date)) {
             return null;
         }
 
-        $filename = "algorithms/" . $date . ".json";
+        $filename = $this->algorithmsPath . "/" . $date . ".json";
         try {
             $data = file_get_contents($filename);
             return json_decode($data, true);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }
 
-    public function getAlgorithms()
-    {
-        $folder = "algorithms";
-        $files = scandir($folder);
-
+    public function getAlgorithms() {
+        $files = scandir($this->algorithmsPath);
+    
         $jsonFiles = array_filter($files, function ($file) {
             return substr($file, -5) === ".json";
         });
-
-        $promises = [];
+    
+        $algorithms = [];
         foreach ($jsonFiles as $file) {
-            $filename = $folder . "/" . $file;
-            $promises[] = file_get_contents($filename);
+            $filename = $this->algorithmsPath . "/" . $file;
+            $algorithms[] = json_decode(file_get_contents($filename), true);
         }
-
-        return array_map("json_decode", $promises, true);
+    
+        usort($algorithms, function ($a, $b) {
+            return strtotime($b["date"]) - strtotime($a["date"]);
+        });
+    
+        return $algorithms;
     }
 
-    public function existsAlgorithmForDate($date)
-    {
+    public function existsAlgorithmForDate($date) {
         try {
-            $filename = "algorithms/" . $date . ".json";
+            $filename = $this->algorithmsPath . "/" . $date . ".json";
             if (file_exists($filename) && is_readable($filename)) {
                 return true;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Ignore
         }
 
         return false;
     }
 }
-
-// Example usage:
-// $repo = new AlgorithmRepository();
-// $latesAlg = $repo->getLatestAlgorithm();
-// $algos = $repo->getAlgorithms();
-
-// print_r($latesAlg);
-// print_r($algos);

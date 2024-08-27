@@ -54,6 +54,14 @@ class Response implements ResponseInterface {
     /**
      * @inheritDoc
      */
+    public function body($data): ResponseInterface {
+        $this->body = $data;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function status($status): ResponseInterface {
         $this->status = $status;
         return $this;
@@ -75,5 +83,12 @@ class Response implements ResponseInterface {
     public function header(string $name, string $value): ResponseInterface {
         $this->header[] = "$name: $value";
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function redirect(string $url): ResponseInterface {
+        return $this->header("Location", $url);
     }
 }

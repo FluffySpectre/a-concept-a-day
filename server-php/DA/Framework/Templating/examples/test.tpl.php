@@ -1,1 +1,0 @@
-<div><?php htmlspecialchars(); ?></div>
