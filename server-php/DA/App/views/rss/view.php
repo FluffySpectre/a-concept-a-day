@@ -10,16 +10,16 @@
             <item>
                 <title><?= htmlspecialchars($algorithm["name"]) ?></title>
                 <link><?= "https://daily-algorithm.com/prev/" . date("Y-m-d", $algorithm["date"]) ?></link>
-                <description><?= htmlspecialchars($algorithm["content"][0]["content"]) ?></description>
+                <description><?= $algorithm["content"][0]["content"] ?></description>
                 <content:encoded>
                     <![CDATA[
                         <?php foreach($algorithm["content"] as $content): ?>
                             <h4><?= htmlspecialchars($content["title"]) ?></h4>
                             <?php if ($content["type"] === "code"): ?>
-                                <p><pre><code><?= htmlspecialchars($content["content"]) ?></code></pre></p>
+                                <p><pre><code><?= $content["content"] ?></code></pre></p>
                             <?php endif; ?>
                             <?php if ($content["type"] === "text"): ?>
-                                <p><?= htmlspecialchars($content["content"]) ?></p>
+                                <p><?= $content["content"] ?></p>
                             <?php endif; ?>
                         <?php endforeach; ?>
                     ]]>
