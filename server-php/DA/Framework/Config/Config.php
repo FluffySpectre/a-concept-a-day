@@ -19,7 +19,7 @@ class Config {
      */
     public static function get($key, $default = null) {
         $config = self::getConfig();
-        return !empty($config[$key]) ? $config[$key] : $default;
+        return !isset($config[$key]) ? $config[$key] : $default;
     }
 
     /**
