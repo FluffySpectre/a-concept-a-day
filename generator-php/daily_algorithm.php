@@ -5,8 +5,13 @@ use DA\Config;
 
 require __DIR__ . "/autoload.php";
 
+set_time_limit(300); // Set the maximum execution time to 5 minutes
+
 // Load the previous algorithms list from file
-$prevAlgorithms = file_get_contents(__DIR__ . "/previous_algorithms.txt");
+$prevAlgorithms = "";
+if (file_exists(__DIR__ . "/previous_algorithms.txt")) {
+    $prevAlgorithms = file_get_contents(__DIR__ . "/previous_algorithms.txt");
+}
 
 // Load the system prompt and prompt from file and replace variables
 $prompt = file_get_contents(__DIR__ . "/prompt.txt");
