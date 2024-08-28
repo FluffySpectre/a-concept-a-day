@@ -1,0 +1,23 @@
+Please suggest an interesting and useful algorithm that a software developer and game developer should know.
+Your answer should be in {ANSWER_LANGUAGE} and contain the following information about this algorithm:
+- Name of the algorithm
+- A brief, concise summary of the algorithm in simple terms
+- The single steps of the algorithm formatted as HTML ordered list
+- An interesting practical example of the application of the algorithm
+- The time and space complexity of the algorithm
+- A descriptive and easy to understand Python code example for the algorithm
+
+Ignore the following algorithms:
+{PREV_ALGORITHMS_LIST}
+
+Give your answer as a properly escaped JSON object in the following format:
+{
+    "name": "Name of the algorithm",
+    "summary": "A brief, concise summary of the algorithm in simple terms",
+    "step_description": "The single steps of the algorithm formatted as HTML ordered list",
+    "example": "An interesting practical example of the application of the algorithm",
+    "complexity": "The time and space complexity of the algorithm",
+    "example_code": "A descriptive and easy to understand Python code example for the algorithm"
+}
+
+Respond only with the JSON object and no further explanation!
