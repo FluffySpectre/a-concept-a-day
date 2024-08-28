@@ -23,6 +23,7 @@ $systemPrompt = file_get_contents(__DIR__ . "/system_prompt.txt");
 $groqClient = new GroqAPIClient(Config::get("API_KEY"));
 
 $retries = 10;
+$lastError = "";
 while ($retries-- > 0) {
     try {
         $response = $groqClient->prompt_json($prompt, $systemPrompt);
@@ -38,13 +39,15 @@ while ($retries-- > 0) {
         ];
         $finalAlgorithm = ["name" => trim($jsonResponse["name"]), "content" => $contents, "date" => time()];
 
-        file_put_contents(Config::get("OUTPUT_PATH") . "/" . date("Y-m-d") . ".json", json_encode($finalAlgorithm, JSON_PRETTY_PRINT));
+        file_put_contents(__DIR__ . "/../server-php/algorithms/" . date("Y-m-d") . ".json", json_encode($finalAlgorithm, JSON_PRETTY_PRINT));
         file_put_contents(__DIR__ . "/previous_algorithms.txt", $prevAlgorithms . "\n" . trim($jsonResponse["name"]));
-    } catch (Exception $e) {}
+    } catch (Exception $e) {
+        $lastError = $e->getMessage();
+    }
 }
 
 if ($retries > 0) {
-    echo "Successfully generated ". date("Y-m-d").".json\n";
+    echo "Successfully generated ". date("Y-m-d").".json";
 } else {
-    echo "Failed to generate ". date("Y-m-d").".json\n";
+    echo "Failed to generate ". date("Y-m-d").".json<br><br>Error:<br>" . $lastError;
 }
