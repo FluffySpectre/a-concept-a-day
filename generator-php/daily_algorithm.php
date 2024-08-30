@@ -28,6 +28,7 @@ while ($retries-- > 0) {
     try {
         $response = $groqClient->prompt_json($prompt, $systemPrompt);
         $response = str_replace(["```python\n", "```python", "```\n", "```"], "", $response);
+        $response = str_replace(["\\n"], "\n", $response);
 
         $jsonResponse = json_decode($response, true);
         $contents = [
