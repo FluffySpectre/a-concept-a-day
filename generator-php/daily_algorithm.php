@@ -28,7 +28,6 @@ while ($retries-- > 0) {
     try {
         $response = $groqClient->prompt_json($prompt, $systemPrompt);
         $response = str_replace(["```python\n", "```python", "```\n", "```"], "", $response);
-        $response = str_replace(["\\n"], "\n", $response);
 
         $jsonResponse = json_decode($response, true);
         $contents = [
@@ -36,7 +35,7 @@ while ($retries-- > 0) {
             ["title" => "Use Case", "content" => trim($jsonResponse["example"]), "type" => "text"],
             ["title" => "Steps", "content" => trim($jsonResponse["step_description"]), "type" => "text"],
             ["title" => "Complexity", "content" => trim($jsonResponse["complexity"]), "type" => "text"],
-            ["title" => "Code Example", "content" => trim($jsonResponse["example_code"]), "type" => "code"]
+            ["title" => "Code Example", "content" => trim(str_replace("\\n", "\n", $jsonResponse["example_code"])), "type" => "code"]
         ];
         $finalAlgorithm = ["name" => trim($jsonResponse["name"]), "content" => $contents, "date" => time()];
 
