@@ -19,7 +19,7 @@ class GroqAPIClient {
                 ["role" => "system", "content" => $systemPrompt],
                 ["role" => "user", "content" => $prompt]
             ],
-            "model" => "llama-3.1-70b-versatile",
+            "model" => "llama-3.3-70b-versatile",
             "temperature" => 0.1,
             "max_tokens" => 4096,
             "top_p" => 1,
